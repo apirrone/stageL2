@@ -7,5 +7,7 @@ liste des applications concernant le routage de messages sans réseau internet o
 - Text SMS, qui permet d'envoyer des messages chiffrés mais passe par le réseau internet.
 - Starlogo, application windows/mac/linux qui permet de simuler des réseaux décentralisés avec des tortues. Nous n'avons pour l'instant pas bien compris son fonctionnement. 
 (URL : http://www3.nd.edu/~agent/Papers/Research_Kennedy02.pdf && http://education.mit.edu/cgi-bin/StarLogoForm.pl )
+-TinCan :Crée un réseau WiFi de nom TinCan_(randomID), l'application détecte les réseaux et s'y connecte, elle échange alors tous les messages qu'ils n'ont pas en commun. Donc messages publics.
+
 
 Bilan : On ne va pas réinventer la roue.
