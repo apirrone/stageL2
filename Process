@@ -1,0 +1,14 @@
+#process 
+
+Idée du jour : 
+On veut envoyer un message de Alice à Bob. 
+
+Pour cela, on va envoyer en broadcast le message de Alice, chiffré par la clé publique de Bob.
+=> tous les intermédiaires du réseau recevront le message s'ils croisent Alice.
+
+Les intermédiaires transmettront le message en broadcast à leurs voisins si ces derniers n'ont pas déjà le message. 
+Lorsque Bob croise un intermédiaire qui possède le message d'Alice, un signal est envoyé via internet et ce message 
+est effacé du portable de tous les porteurs, Alice comprise.
+
+=> Pour gérer la diffusion de plusieurs messages en même temps, on peut considérer une base de données implantée dans chaque téléphone.
+Chaque utilisateur synchronisera sa BDD de messages avec son voisin, ajoutant uniquement les messages qu'il ne porte pas encore.
