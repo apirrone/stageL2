@@ -18,6 +18,6 @@ Avantages :
   - On se passe de recherche du chemin le plus cours et par la même de statistiques de rencontre des utilisateurs
   
 Inconvénients :
-  - Peut vite devenir lourd puisque chaque téléphone possède potentiellemet tous les messages en cours de transfert
+  - Peut vite devenir lourd puisque chaque téléphone possède potentiellemet tous les messages en cours de transfert (cependant, on peut considérer que puisque l'application fonctionnera de manière relativement locale - pas dans le monde entier- la quantité de messages restera raisonnable, on pourra quand même implémenter une durée maximale de conservation des messages sur les intermédiaires)
   - Obligation de passer par internet pour envoyer à tous les intermédiaires l'accusé de reception d'un message pour qu'ils l'éffacent de leur base de données
   - Nécéssité (?) de centraliser la génération d'identifiants pour les messages 
