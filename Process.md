@@ -21,3 +21,10 @@ Inconvénients :
   - Peut vite devenir lourd puisque chaque téléphone possède potentiellemet tous les messages en cours de transfert (cependant, on peut considérer que puisque l'application fonctionnera de manière relativement locale - pas dans le monde entier- la quantité de messages restera raisonnable, on pourra quand même implémenter une durée maximale de conservation des messages sur les intermédiaires)
   - Obligation de passer par internet pour envoyer à tous les intermédiaires l'accusé de reception d'un message pour qu'ils l'éffacent de leur base de données
   - Nécéssité (?) de centraliser la génération d'identifiants pour les messages ( non, UID)
+
+
+suppression : verification d'authenticité du signal de suppression + nécéssité de connaitre tous les porteurs du message
+messages supprimés au bout d'un certain temps => permet l'accusé de suppression via le même procédé
+
+
+Timeout => enclenche le timeout quand on a transmis le message une fois
