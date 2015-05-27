@@ -1,4 +1,4 @@
-#process 
+#Journal
 
 Idée du jour : 
 On veut envoyer un message de Alice à Bob. 
