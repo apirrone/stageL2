@@ -46,3 +46,6 @@ Reste à implémenter
 - Meilleur moyen de visualiser les messages et signaux qui transitent
 - Timeout sur les messages et signaux
 - Simulation de marche aléatoire des noeuds et apparition plus ou moins aléatoire de nouveaux messages
+
+
+libgpg => cryptage
