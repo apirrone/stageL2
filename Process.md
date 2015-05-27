@@ -28,3 +28,21 @@ messages supprimés au bout d'un certain temps => permet l'accusé de suppressio
 
 
 Timeout => enclenche le timeout quand on a transmis le message une fois
+
+22/05 : Ajout du signal de suppression des messages reçu dans la simulation
+
+26/05 : Réussite partielle d'envoi de texte via Nfc, ça marche dans un sens mais fait quelque chose de bizarre (alors que Baptiste et moi avons exactement le même smartphone tournant sur le même OS). 
+- Envoi Baptiste -> Antoine : fonctionne comme prévu
+- Envoi Antoine -> Baptiste : ouvre une fenetre chez baptiste indiquant qu'un nouveau tag a été ajouté.
+
+
+Etat de la simulation 
+---------------------
+- Envoi de messages avec intermédiaires fonctionnel
+- Lorsqu'un destinataire reçoit un message, il envoie un deleteSignal, tous les intermédiaires qui receveront le deletSignal supprimeront le message et transmetteront le deleteSignal. Si l'envoyeur recoit le deleteSignal, il est notifié de la bonne reception du message qu'il a envoyé et ne transmet pas le deleteSignal. 
+
+Reste à implémenter 
+-------------------
+- Meilleur moyen de visualiser les messages et signaux qui transitent
+- Timeout sur les messages et signaux
+- Simulation de marche aléatoire des noeuds et apparition plus ou moins aléatoire de nouveaux messages
