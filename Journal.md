@@ -35,6 +35,14 @@ Timeout => enclenche le timeout quand on a transmis le message une fois
 - Envoi Baptiste -> Antoine : fonctionne comme prévu
 - Envoi Antoine -> Baptiste : ouvre une fenetre chez baptiste indiquant qu'un nouveau tag a été ajouté.
 
+27/05 : Discussion avec M.Casteigts et M.Klein :
+- Il ne parrait pas possible d'effectuer une communication à deux sens avec android beam, on serait obligé de connecter deux fois les téléphones et d'envoyer chacun son tour. (Rechercher s'il n'y a pas moyen de contourner cela) 
+- Comment gérer la base d'utilisateur? Si un utilisateur veut envoyer un message à un autre, il doit connaitre son identifiant (quel id choisir : clé publique? IMEI? ...) 
+- Est-ce qu'on synchronise aussi la base d'utilisateurs automatiquement? ou alors ajout "manuel" (par selection dans un menu puis rapprochement des téléphones" ?
+
+
+28/05 : Nous avons réussi à régler notre probleme avec le prototype d'envoi de messages. Nous savons désormais transférer un message d'un smartphone à un autre via android beam.
+
 
 Etat de la simulation 
 ---------------------
