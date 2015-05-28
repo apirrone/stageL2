@@ -80,3 +80,4 @@ http://stackoverflow.com/questions/8184492/best-way-to-secure-android-app-sensit
 http://developer.android.com/training/articles/security-tips.html
 http://developer.android.com/reference/java/security/KeyPairGenerator.html
 http://developer.android.com/reference/java/security/KeyPair.html
+http://developer.android.com/reference/java/security/KeyStore.html
