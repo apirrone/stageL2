@@ -69,4 +69,10 @@ Reste à implémenter
 - Simulation de marche aléatoire des noeuds et apparition plus ou moins aléatoire de nouveaux messages
 
 
-libgpg => cryptage
+Partie Crypto
+------------------- 
+http://stackoverflow.com/questions/10990821/how-to-securely-store-credentials-password-in-android-application
+http://stackoverflow.com/questions/8184492/best-way-to-secure-android-app-sensitive-data
+http://developer.android.com/training/articles/security-tips.html
+http://developer.android.com/reference/java/security/KeyPairGenerator.html
+http://developer.android.com/reference/java/security/KeyPair.html
