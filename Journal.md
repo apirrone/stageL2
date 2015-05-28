@@ -44,6 +44,10 @@ Timeout => enclenche le timeout quand on a transmis le message une fois
 28/05 : Nous avons réussi à régler notre probleme avec le prototype d'envoi de messages. Nous savons désormais transférer un message d'un smartphone à un autre via android beam.
 Premier pas dans la crypto effectué, on peut crypter/décrypter un message en utilisant la procédure RSA. Le message est donc chiffré via une clé publique, couplée à un salage et un byte array. Tout ceci est réalisé grâce à la librairie Encryption par simbiose.
 
+Début de tentative d'implémentation d'une base SQLite sur l'application pour tests. (chercher autres moyens de stocker infos sous android) 
+On s'est renseignés sur la génération de clés publiques et privées sous android ainsi que sur la facon de stocker la clé privée de manière sécurisée (cf partie crypto)
+Nous n'avons pas touché à la simulation aujourd'hui
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
