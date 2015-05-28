@@ -44,6 +44,18 @@ Timeout => enclenche le timeout quand on a transmis le message une fois
 28/05 : Nous avons réussi à régler notre probleme avec le prototype d'envoi de messages. Nous savons désormais transférer un message d'un smartphone à un autre via android beam.
 Premier pas dans la crypto effectué, on peut crypter/décrypter un message en utilisant la procédure RSA. Le message est donc chiffré via une clé publique, couplée à un salage et un byte array. Tout ceci est réalisé grâce à la librairie Encryption par simbiose.
 
+TODO
+---------------------
+Structurer les données pour la création des bases : deux tables :
+- Contacts : uuid, nom, cle_publique
+- Message : uuid, nom_source, nom_destinataire, contenu ,  (XML/JSON)
+
+Fusionner le code application TestNFC avec AppALaKon
+
+Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer)
+
+
+
 
 Etat de la simulation 
 ---------------------
