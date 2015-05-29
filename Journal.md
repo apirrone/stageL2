@@ -57,6 +57,9 @@ A faire aujourd'hui :
 
 Problème, AndroidKeyStore n'est disponnible que depuis la version 4.3, donc ca ne marchera pas sur des téléphones tournant sous des versions anterieures.
 
+Changement de méthode de cryptage. Après avoir effectué certaines recherches, nous nous sommes aperçus qu'encryption ne nous proposait pas un service fiable au niveau sécurité (clé de 128 bits avec AES, "facilement" crackable apparemment) et rapide niveau utilisation (compter 8 secondes pour chiffrer le message et 8 autres secondes pour le déchiffrer). Nous avons donc effectué des recherches sur les différents algorithmes utilisés en cryptographie pour chiffrer nos messages, et nous avons décidé d'utiliser RSA. C'est l'algorithme qui est le plus recommandé pour son rapport sécurité/rapidité. Il met plus de temps à chiffrer qu'à déchiffrer, à l'inverse de son rival DSA. Nous avons maintenant un duo clé privée/clé publique composé de deux clés de 2048 bits(paramétrable), les messages sont plus ou moins longs à chiffrer en fonction de leur taille (compter 1 sec pour 2 lignes de sms). En revanche, le déchiffrage est instantané, ce qui nous sera favorable lors de la réception d'un message pour le destinataire, la notification lui permettra de consulter le message directement, sans attendre.
+
+
 
 TODO
 ---------------------
