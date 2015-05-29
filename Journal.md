@@ -48,6 +48,12 @@ Début de tentative d'implémentation d'une base SQLite sur l'application pour t
 On s'est renseignés sur la génération de clés publiques et privées sous android ainsi que sur la facon de stocker la clé privée de manière sécurisée (cf partie crypto)
 Nous n'avons pas touché à la simulation aujourd'hui
 
+29/05 : Implémentation terminée (mais à tester) de la base SQLite (enfin). On s'attaque à la génération de clés publiques et privées avec KeyPairGenerator. On avait dans l'idée d'utiliser la fonctionnalité KeyStore (ou KeyChain, un eu plus bas niveau apparemment) d'Android qui permet de stocker les clés de manière sécurisée sur le téléphone.
+A faire aujourd'hui :
+- Générer le duo clé publique/clé privée pour chaque téléphone UNE FOIS et les stocker dans KeyStore/KeyChain
+- Tenter d'envoyer un message crypté avec la clé publique du destinataire (manuellement pour l'instant)
+- Synchronisation des messages et de la base de contacts lors d'une interaction entre portables.
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
