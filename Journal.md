@@ -75,6 +75,8 @@ Tentative d'implémentation d'ajout de contact via nfc (dans une autre activité
 Problème au niveau de la priorisation des activités, la première activité est systématiquement appelée lors de la réception du CallBack, donc pas traité par l'autre activité.
 Idée de solution : on "spécialise" les intent, la première activité recoit tout les callback et les traite en fonction des parametres contenus dans l'intent.
 
+MAJ 01/06 : Lors de la réception d'un message, l'activité ne se relance plus, le message s'affiche correctement dans la vue prévue à cet effet. Lors de l'ajout d'un contact, une activité se relance(non souhaité).
+
 
 TODO
 ---------------------
