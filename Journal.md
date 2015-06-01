@@ -65,7 +65,15 @@ MaxLen = kLen -2hLen -2.
 )
 
 01/06
+Crypto :
+
 AES nous permettrait d'avoir une taille max de message de 250 millions de To mais marche avec un système symétrique (contrairement à RSA), et a besoin d'un premier échange d'une clé secrète sur le réseau. Nous confirmons donc notre choix de RSA, et limitons alors la taille d'un message à 245 caractères, ce qui devrait être suffisant pour envoyer un message équivalent à un SMS (longueur moyenne d'un SMS =60 caractères, sachant que la première limite de caractères d'un sms était de 160 caractères).
+
+Base de données : 
+
+Tentative d'implémentation d'ajout de contact via nfc (dans une autre activité, on rentre son nom et on envoie nom + clé public au destinataire qui enregistre dans sa base de données).
+Problème au niveau de la priorisation des activités, la première activité est systématiquement appelée lors de la réception du CallBack, donc pas traité par l'autre activité.
+Idée de solution : on "spécialise" les intent, la première activité recoit tout les callback et les traite en fonction des parametres contenus dans l'intent.
 
 
 TODO
