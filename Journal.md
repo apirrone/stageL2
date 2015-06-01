@@ -59,10 +59,14 @@ Problème, AndroidKeyStore n'est disponnible que depuis la version 4.3, donc ca 
 
 Changement de méthode de cryptage. Après avoir effectué certaines recherches, nous nous sommes aperçus qu'encryption ne nous proposait pas un service fiable au niveau sécurité (clé de 128 bits avec AES, "facilement" crackable apparemment) et rapide niveau utilisation (compter 8 secondes pour chiffrer le message et 8 autres secondes pour le déchiffrer). Nous avons donc effectué des recherches sur les différents algorithmes utilisés en cryptographie pour chiffrer nos messages, et nous avons décidé d'utiliser RSA. C'est l'algorithme qui est le plus recommandé pour son rapport sécurité/rapidité. Il met plus de temps à chiffrer qu'à déchiffrer, à l'inverse de son rival DSA. Nous avons maintenant un duo clé privée/clé publique composé de deux clés de 2048 bits(paramétrable), les messages sont plus ou moins longs à chiffrer en fonction de leur taille (compter 1 sec pour 2 lignes de sms). En revanche, le déchiffrage est instantané, ce qui nous sera favorable lors de la réception d'un message pour le destinataire, la notification lui permettra de consulter le message directement, sans attendre.
 
-Problème : limité à 256 caractères.
+Problème : limité à 245 caractères.
 ( d'après "beginning cryptography with java" (chap4 p 98) de David Hook, si hLen est la longueur du h en octets et kLen la taille de la clé en octets, la taille max du message que l'on peut chiffrer devient : 
 MaxLen = kLen -2hLen -2.
 )
+
+01/06
+AES nous permettrait d'avoir une taille max de message de 250 millions de To mais marche avec un système symétrique (contrairement à RSA), et a besoin d'un premier échange d'une clé secrète sur le réseau. Nous confirmons donc notre choix de RSA, et limitons alors la taille d'un message à 245 caractères, ce qui devrait être suffisant pour envoyer un message équivalent à un SMS (longueur moyenne d'un SMS =60 caractères, sachant que la première limite de caractères d'un sms était de 160 caractères).
+
 
 TODO
 ---------------------
