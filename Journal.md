@@ -77,6 +77,11 @@ Idée de solution : on "spécialise" les intent, la première activité recoit t
 
 MAJ 01/06 : Lors de la réception d'un message, l'activité ne se relance plus, le message s'affiche correctement dans la vue prévue à cet effet. Lors de l'ajout d'un contact, une activité se relance(non souhaité).
 
+02/06 : Nous avons deux points bloquants : 
+- L'utilisation du nfc dans une activité qui a été lancée depuis une autre
+- Dans l'activité d'ajout de contact, l'action de l'intent n'est pas NDEF_DISCOVERED comme voulu, mais NDEF_MAIN...
+
+Toujours pas de solution...
 
 TODO
 ---------------------
