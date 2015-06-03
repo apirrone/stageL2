@@ -86,13 +86,21 @@ Toujours pas de solution...
 
 03/06 : ENFIN ça semble marcher. En bidouillant, et la solution n'est pas très logique je trouve, je ne comprend pas pourquoi ça résout le problème, mais ça le résout, on peut avancer
 
+Ajout de contacts fonctionnel (avec impossibilité d'ajouter plusieurs fois le même contact -par clé ou par nom-).
+On a un bouton pour envoyer un message, on affiche d'abord la liste des contacts, puis quand on en choisis un, on arrive sur une activité depuis laquelle on peut envoyer des un message à ce contact.
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
-- Contacts : uuid, nom, cle_publique
-- Message : uuid, nom_source, nom_destinataire, contenu ,  (XML/JSON)
+- Contacts : nom, cle_publique - OK
+- Message : uuid, nom_source, nom_destinataire, contenu - OK
+- Créer un paquet contenant le message, la source et le destinataire que l'on enverra à la place de juste le message comme nous le faisons en ce moment
+- Checker si le mesage recu est pour nous, si non le stocker dans la base de messages
+- Gérer le transfert des bases de messages
+- Intégrer le cryptage des messages
+- Faire en sorte que l'on puisse préparer l'envoi de messages, on ecrit un message qui sera envoyé lors de la prochaine communication
+- Implémenter les feedback
 
-Fusionner le code application TestNFC avec AppALaKon
 
 Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer)
 
