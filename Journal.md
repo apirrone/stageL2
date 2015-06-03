@@ -83,6 +83,9 @@ MAJ 01/06 : Lors de la réception d'un message, l'activité ne se relance plus, 
 
 Toujours pas de solution...
 
+
+03/06 : ENFIN ça semble marcher. En bidouillant, et la solution n'est pas très logique je trouve, je ne comprend pas pourquoi ça résout le problème, mais ça le résout, on peut avancer
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
