@@ -15,7 +15,13 @@ public class Message {
 
     private String content;
 
-    public Message(String uuid, String publicKeySource, String publicKeyDest, String content) {
+    public Message(String content, String publicKeySource, String publicKeyDest) {
+        this.uuid = UUID.randomUUID().toString();
+        this.publicKeySource = publicKeySource;
+        this.publicKeyDest = publicKeyDest;
+        this.content = content;
+    }
+    public Message(String uuid, String content, String publicKeySource, String publicKeyDest) {
         this.uuid = uuid;
         this.publicKeySource = publicKeySource;
         this.publicKeyDest = publicKeyDest;

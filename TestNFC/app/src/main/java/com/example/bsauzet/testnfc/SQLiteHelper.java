@@ -34,7 +34,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_MESSAGES_CONTENT = "content";
 
     private static final String[] COLUMNS_USERS = {KEY_USERS_ID, KEY_USERS_PUBLICKEY, KEY_USERS_NAME};
-    private static final String[] COLUMNS_MESSAGES = {KEY_MESSAGES_ID, KEY_MESSAGES_UUID, KEY_MESSAGES_IDSOURCE, KEY_MESSAGES_IDDEST, KEY_MESSAGES_CONTENT};
+    private static final String[] COLUMNS_MESSAGES = {KEY_MESSAGES_ID, KEY_MESSAGES_UUID, KEY_MESSAGES_CONTENT, KEY_MESSAGES_IDSOURCE, KEY_MESSAGES_IDDEST};
 
 
     public SQLiteHelper(Context context){
@@ -52,9 +52,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String CREATE_MESSAGES_TABLE = "CREATE TABLE messages ( " +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "uuid TEXT, " +
+                "content TEXT, " +
                 "idSource TEXT, " +
-                "idDest TEXT, " +
-                "content TEXT )";
+                "idDest TEXT)";
 
         db.execSQL(CREATE_USERS_TABLE);
         db.execSQL(CREATE_MESSAGES_TABLE);
@@ -94,7 +94,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         User user = null;
         if(cursor != null)
             if(cursor.moveToFirst())
-                user = new User(cursor.getString(1), cursor.getString(2));
+                user = new User(cursor.getString(2), cursor.getString(1));
 
         return user;
     }
@@ -115,7 +115,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         User user = null;
         if(cursor != null)
             if(cursor.moveToFirst())
-                user = new User(cursor.getString(1), cursor.getString(2));
+                user = new User(cursor.getString(2), cursor.getString(1));
 
         return user;
     }

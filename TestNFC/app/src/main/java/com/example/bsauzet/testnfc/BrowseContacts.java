@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +36,6 @@ public class BrowseContacts extends Activity {
         lv = (ListView)findViewById(R.id.ListContacts);
         sqLiteHelper = new SQLiteHelper(this);
         List<User> users = sqLiteHelper.getAllUsers();
-        ArrayList<String> usersNames = new ArrayList<String>();
         String[] lv_arr = new String[users.size()];
         for(int i = 0 ; i < users.size() ; i++){
             lv_arr[i] = users.get(i).getName();
@@ -61,6 +61,7 @@ public class BrowseContacts extends Activity {
         Intent intent = new Intent(this, SendMessage.class);
         intent.putExtra("name", name);
         intent.putExtra("pk", sqLiteHelper.getUserByName(name).getPublicKey());
+        Log.i("MyApp", sqLiteHelper.getUserByName(name).getPublicKey());
         intent.setAction("NewActivity");
         startActivity(intent);
     }

@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +33,6 @@ public class SendMessage extends Activity {
     String destName;
     String destPk;
     String myPk;
-    NfcAdapter nfcAdapter;
 
     SQLiteHelper sqLiteHelper;
 
@@ -47,54 +47,7 @@ public class SendMessage extends Activity {
         destName = intent.getStringExtra("name");
         destPk = intent.getStringExtra("pk");
         myPk = getMyPublicKey();
-
-        Toast.makeText(SendMessage.this,
-                destName,
-                Toast.LENGTH_LONG).show();
         mEdit = (EditText)findViewById(R.id.editText);
-
-        nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
-
-        nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
-            @Override
-            public NdefMessage createNdefMessage(NfcEvent event) {
-
-                String stringOut = mEdit.getText().toString();
-                byte[] bytesOutMessage = stringOut.getBytes();
-                byte[] bytesOutSender = myPk.getBytes();
-                byte[] bytesOutDest = sqLiteHelper.getUserByName(destName).getName().getBytes();
-
-                NdefRecord ndefRecordOut = new NdefRecord(
-                        NdefRecord.TNF_MIME_MEDIA,
-                        "text/plain".getBytes(),
-                        new byte[]{},
-                        bytesOutMessage);
-
-
-                NdefRecord[] ndefRecords = new NdefRecord[3];
-                ndefRecords[0] = new NdefRecord(
-                        NdefRecord.TNF_MIME_MEDIA,
-                        "text/plain".getBytes(),
-                        new byte[]{},
-                        bytesOutMessage);
-                ndefRecords[1] = new NdefRecord(
-                        NdefRecord.TNF_MIME_MEDIA,
-                        "text/plain".getBytes(),
-                        new byte[]{},
-                        bytesOutSender);
-                ndefRecords[2] = new NdefRecord(
-                        NdefRecord.TNF_MIME_MEDIA,
-                        "text/plain".getBytes(),
-                        new byte[]{},
-                        bytesOutDest);
-
-                NdefMessage ndefMessageout = new NdefMessage(ndefRecords);
-
-                return ndefMessageout;
-            }
-        }, this);
-
-
     }
 
     public String getMyPublicKey(){
@@ -125,18 +78,19 @@ public class SendMessage extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-
-        Intent intent = getIntent();
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        nfcAdapter.disableForegroundDispatch(this);
+    }
+
+    public void sendButton(View view) {
+        Message message = new Message(mEdit.getText().toString(), myPk, destPk);
+        Toast.makeText(SendMessage.this,
+                message.getPublicKeyDest(),
+                Toast.LENGTH_LONG).show();
+        sqLiteHelper.addMessage(message);
     }
 
 }

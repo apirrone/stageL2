@@ -31,8 +31,10 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -43,6 +45,8 @@ public class MainActivity extends Activity{
     private EditText mEdit;
 
     NfcAdapter nfcAdapter;
+
+    SQLiteHelper sqLiteHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class MainActivity extends Activity{
             generateKeys();
         Log.i("myApp", getMyPublicKey());
 
+        sqLiteHelper = new SQLiteHelper(this);
 
         mTextView = (TextView)findViewById(R.id.retour);
         mEdit = (EditText)findViewById(R.id.editText);
@@ -63,20 +68,9 @@ public class MainActivity extends Activity{
 
         nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
             @Override public NdefMessage createNdefMessage(NfcEvent event) {
+                NdefMessage mess = createNdefMessageAllMessages();
 
-                String stringOut = mEdit.getText().toString();
-
-                byte[] bytesOut = stringOut.getBytes();
-
-                NdefRecord ndefRecordOut = new NdefRecord(
-                        NdefRecord.TNF_MIME_MEDIA,
-                        "text/plain".getBytes(),
-                        new byte[] {},
-                        bytesOut);
-
-                NdefMessage ndefMessageout = new NdefMessage(ndefRecordOut);
-
-                return ndefMessageout;
+                return mess;
             }
         }, this);
 
@@ -92,7 +86,7 @@ public class MainActivity extends Activity{
 
         Toast.makeText(MainActivity.this,
                 intent.getAction().toString(),
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
@@ -116,21 +110,55 @@ public class MainActivity extends Activity{
                     intent.getParcelableArrayExtra(
                             NfcAdapter.EXTRA_NDEF_MESSAGES);
 
+            ArrayList<Message> incMessages= new ArrayList<Message>();
+
             NdefMessage inNdefMessage = (NdefMessage)parcelables[0];
             NdefRecord[] inNdefRecords = inNdefMessage.getRecords();
-            NdefRecord message = inNdefRecords[0];
-            NdefRecord sender = inNdefRecords[1];
-            NdefRecord dest = inNdefRecords[2];
 
-            String inMsg = new String(message.getPayload());
-            String inSender = new String(sender.getPayload());
-            String inDest = new String(dest.getPayload());
+            String temp = new String(inNdefRecords[0].getPayload());
+            int nbMessages = Integer.valueOf(temp);
 
-            if(inDest.equals(getMyPublicKey()))
-                mTextView.setText(inMsg);//IF MESSAGE FOR ME DISPLAY, ELSE PUT IN DATABASE
-            else
-                mTextView.setText("MESSAGE NOT FOR YOU");
+            int j = 1;
+            for(int i = 0 ; i < nbMessages ; i++){
+                String uuid = new String(inNdefRecords[j].getPayload());
+                j++;
+                String message = new String(inNdefRecords[j].getPayload());
+                j++;
+                String source = new String(inNdefRecords[j].getPayload());
+                j++;
+                String dest = new String(inNdefRecords[j].getPayload());
+                j++;
+                incMessages.add(new Message(uuid, message, source, dest));
+            }
+            Log.i("MyApp", "size incMessages : "+incMessages.size());
 
+            addNotKnownMessages(incMessages);
+
+        }
+    }
+
+    public void addNotKnownMessages(ArrayList<Message> mess){
+        List<Message> myMessages = sqLiteHelper.getAllMessages();
+        for(int i = 0 ; i < mess.size() ; i++) {
+            boolean newMess = true;
+            for (int j = 0; j < myMessages.size(); j++) {
+                if (mess.get(i).getUuid().equals(myMessages.get(j).getUuid())) {
+                    newMess = false;
+                    break;
+                }
+            }
+            if(newMess) {
+                Log.i("MyApp", "newMess");
+                Log.i("MyApp", "pkDest : "+mess.get(i).getPublicKeyDest());
+                Log.i("MyApp", "myPk : "+getMyPublicKey());
+                if (mess.get(i).getPublicKeyDest().equals(getMyPublicKey())) {
+                    Log.i("MyApp", "newMess : message for me");
+                    mTextView.setText(mess.get(i).getContent());
+                }
+                sqLiteHelper.addMessage(mess.get(i));
+                Log.i("MyApp", "add to database");
+
+            }
         }
     }
 
@@ -220,5 +248,59 @@ public class MainActivity extends Activity{
         if(publicKey != null)
             output = publicKey.toString();
         return output;
+    }
+
+    public NdefMessage createNdefMessageAllMessages(){
+
+        List<Message> messages = sqLiteHelper.getAllMessages();
+        if(!messages.isEmpty()) {
+            String nbMessages = String.valueOf(messages.size());
+
+            NdefRecord[] ndefRecords = new NdefRecord[(messages.size() * 4) + 1];
+
+            ndefRecords[0] = new NdefRecord(
+                    NdefRecord.TNF_MIME_MEDIA,
+                    "text/plain".getBytes(),
+                    new byte[]{},
+                    nbMessages.getBytes());
+
+            int j = 1;
+            for (int i = 0; i < messages.size(); i++) {
+                ndefRecords[j] = new NdefRecord(
+                        NdefRecord.TNF_MIME_MEDIA,
+                        "text/plain".getBytes(),
+                        new byte[]{},
+                        messages.get(i).getUuid().getBytes());
+                j++;
+                ndefRecords[j] = new NdefRecord(
+                        NdefRecord.TNF_MIME_MEDIA,
+                        "text/plain".getBytes(),
+                        new byte[]{},
+                        messages.get(i).getContent().getBytes());
+                j++;
+                ndefRecords[j] = new NdefRecord(
+                        NdefRecord.TNF_MIME_MEDIA,
+                        "text/plain".getBytes(),
+                        new byte[]{},
+                        messages.get(i).getPublicKeySource().getBytes());
+                j++;
+                ndefRecords[j] = new NdefRecord(
+                        NdefRecord.TNF_MIME_MEDIA,
+                        "text/plain".getBytes(),
+                        new byte[]{},
+                        messages.get(i).getPublicKeyDest().getBytes());
+                j++;
+            }
+
+            NdefMessage ndefMessageout = new NdefMessage(ndefRecords);
+
+            return ndefMessageout;
+        }
+        else
+            return null;
+    }
+
+    public void viewMessagesButton(View view) {
+        startActivity(new Intent(this, BrowseMessages.class));
     }
 }
