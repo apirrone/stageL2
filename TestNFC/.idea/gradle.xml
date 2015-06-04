@@ -5,14 +5,14 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="1.8" />
         <option name="modules">
           <set>
-            <option value="/autofs/netapp/account/cremi/bsauzet/AndroidStudioProjects/TestNFC" />
-            <option value="/autofs/netapp/account/cremi/bsauzet/AndroidStudioProjects/TestNFC/app" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
       </GradleProjectSettings>
     </option>
   </component>
 </project>
-
