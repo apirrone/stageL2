@@ -111,6 +111,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         null,
                         null,
                         null);
+        
 
         User user = null;
         if(cursor != null)
