@@ -96,6 +96,7 @@ Rom installée Ehndroix V (custom de Kitkat 4.4.2) (work in progress)
 pour le galaxy nexus, un AOSP (Android Open Source Project) de la version 5.1 Lollipop est disponible.
 
 Envoi de message a contact ciblé fonctionnel, si le message envoyé n'est pas pour nous, on ne l'affiche pas.
+Pour l'instant, on envoie notre message au moment ou on l'écrit, dans l'activité SendMessage. Il faut que cette activité ajoute seulement a la base de messages à envoyer notre message, puis qu'on utilise l'activité principale pour synchroniser les messages (en cours).
 
 TODO
 ---------------------
