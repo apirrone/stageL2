@@ -9,6 +9,6 @@ liste des applications concernant le routage de messages sans réseau internet o
 (URL : http://www3.nd.edu/~agent/Papers/Research_Kennedy02.pdf && http://education.mit.edu/cgi-bin/StarLogoForm.pl )
 - TinCan :Crée un réseau WiFi de nom TinCan_(randomID), l'application détecte les réseaux et s'y connecte, elle échange alors tous les messages qu'ils n'ont pas en commun. Donc messages publics.
 - un fichier pdf qui traite de la transmission de messages dans des réseaux "déconnectés" ad-hoc : (URL : http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.130.6204&rep=rep1&type=pdf ) 
-- Serval : Un projet open source de communication par messages ou audio utilisant un réseau de points WiFi crée par les utilisateurs de l'applicaiton. L'application utilise un cryptage par courbe elyptique (très sécurisé) . Son objectif principal est de permettre la communication dans les pays pauvres ou en cas de catastrophe.
+- Serval : Un projet open source de communication par messages ou audio utilisant un réseau de points WiFi crée par les utilisateurs de l'applicaiton. Elle utilise un system "Store and forward", comme ce que nous voulons faire (Fonctionne temporellement avec graphe non connexe au temps T). L'application utilise un cryptage par courbe elyptique (très sécurisé) . Son objectif principal est de permettre la communication dans les pays pauvres ou en cas de catastrophe.
 
 Bilan : On ne va pas réinventer la roue.
