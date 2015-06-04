@@ -89,6 +89,12 @@ Toujours pas de solution...
 Ajout de contacts fonctionnel (avec impossibilité d'ajouter plusieurs fois le même contact -par clé ou par nom-).
 On a un bouton pour envoyer un message, on affiche d'abord la liste des contacts, puis quand on en choisis un, on arrive sur une activité depuis laquelle on peut envoyer des un message à ce contact.
 
+04/06
+Root achevé après 1 jour et demi de recherche, soft-brick, debrick du smartphone et installation de la ROM.
+Logiciel utilisé : Nexus Root Toolkit, outil de rooting compatible avec les appareils samsung et nexus, très complet. 
+Rom installée Ehndroix V (custom de Kitkat 4.4.2) (work in progress)
+pour le galaxy nexus, un AOSP (Android Open Source Project) de la version 5.1 Lollipop est disponible.
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
