@@ -95,12 +95,14 @@ Logiciel utilisé : Nexus Root Toolkit, outil de rooting compatible avec les app
 Rom installée Ehndroix V (custom de Kitkat 4.4.2) (work in progress)
 pour le galaxy nexus, un AOSP (Android Open Source Project) de la version 5.1 Lollipop est disponible.
 
+Envoi de message a contact ciblé fonctionnel, si le message envoyé n'est pas pour nous, on ne l'affiche pas.
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
 - Contacts : nom, cle_publique - OK
 - Message : uuid, nom_source, nom_destinataire, contenu - OK
-- Créer un paquet contenant le message, la source et le destinataire que l'on enverra à la place de juste le message comme nous le faisons en ce moment
+- Créer un paquet contenant le message, la source et le destinataire que l'on enverra à la place de juste le message comme nous le faisons en ce moment - OK
 - Checker si le mesage recu est pour nous, si non le stocker dans la base de messages
 - Gérer le transfert des bases de messages
 - Intégrer le cryptage des messages
