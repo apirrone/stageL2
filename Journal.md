@@ -92,7 +92,7 @@ On a un bouton pour envoyer un message, on affiche d'abord la liste des contacts
 04/06
 Root achevé après 1 jour et demi de recherche, soft-brick, debrick du smartphone et installation de la ROM.
 Logiciel utilisé : Nexus Root Toolkit, outil de rooting compatible avec les appareils samsung et nexus, très complet. 
-Rom installée Ehndroix V (custom de Kitkat 4.4.2) (work in progress)
+Rom installée (AOSP Kitkat 4.4.2) .
 pour le galaxy nexus, un AOSP (Android Open Source Project) de la version 5.1 Lollipop est disponible.
 
 Envoi de message a contact ciblé fonctionnel, si le message envoyé n'est pas pour nous, on ne l'affiche pas.
