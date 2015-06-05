@@ -92,11 +92,11 @@ On a un bouton pour envoyer un message, on affiche d'abord la liste des contacts
 04/06
 Root achevé après 1 jour et demi de recherche, soft-brick, debrick du smartphone et installation de la ROM.
 Logiciel utilisé : Nexus Root Toolkit, outil de rooting compatible avec les appareils samsung et nexus, très complet. 
-Rom installée Ehndroix V (custom de Kitkat 4.4.2) (work in progress)
+Rom installée (AOSP Kitkat 4.4.2) .
 pour le galaxy nexus, un AOSP (Android Open Source Project) de la version 5.1 Lollipop est disponible.
 
 Envoi de message a contact ciblé fonctionnel, si le message envoyé n'est pas pour nous, on ne l'affiche pas.
-Pour l'instant, on envoie notre message au moment ou on l'écrit, dans l'activité SendMessage. Il faut que cette activité ajoute seulement a la base de messages à envoyer notre message, puis qu'on utilise l'activité principale pour synchroniser les messages (en cours).
+Pour l'instant, on envoie notre message au moment ou on l'écrit, dans l'activité SendMessage. Il faut que cette activité ajoute seulement a la base de messages à envoyer notre message, puis qu'on utilise l'activité principale pour synchroniser les messages (en cours, edit : fait).
 
 TODO
 ---------------------
@@ -104,14 +104,15 @@ Structurer les données pour la création des bases : deux tables :
 - Contacts : nom, cle_publique - OK
 - Message : uuid, nom_source, nom_destinataire, contenu - OK
 - Créer un paquet contenant le message, la source et le destinataire que l'on enverra à la place de juste le message comme nous le faisons en ce moment - OK
-- Checker si le mesage recu est pour nous, si non le stocker dans la base de messages
-- Gérer le transfert des bases de messages
+- Gérer le transfert des bases de messages - OK
+- n'afficher dans la liste de messages que les messages que l'on envoie et qu'on a recu qui sont pour nous
 - Intégrer le cryptage des messages
-- Faire en sorte que l'on puisse préparer l'envoi de messages, on ecrit un message qui sera envoyé lors de la prochaine communication
+- Faire en sorte que l'on puisse préparer l'envoi de messages, on ecrit un message qui sera envoyé lors de la prochaine communication - OK
 - Implémenter les feedback
+- Système de conversation (?)
 
 
-Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer)
+Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer), invokebeam.
 
 
 
