@@ -29,6 +29,33 @@ messages supprimés au bout d'un certain temps => permet l'accusé de suppressio
 
 Timeout => enclenche le timeout quand on a transmis le message une fois
 
+Etat de la simulation 
+---------------------
+- Envoi de messages avec intermédiaires fonctionnel
+- Lorsqu'un destinataire reçoit un message, il envoie un deleteSignal, tous les intermédiaires qui receveront le deletSignal supprimeront le message et transmetteront le deleteSignal. Si l'envoyeur recoit le deleteSignal, il est notifié de la bonne reception du message qu'il a envoyé et ne transmet pas le deleteSignal. 
+
+Reste à implémenter 
+-------------------
+- Meilleur moyen de visualiser les messages et signaux qui transitent
+- Timeout sur les messages et signaux
+- Simulation de marche aléatoire des noeuds et apparition plus ou moins aléatoire de nouveaux messages
+
+
+Partie Crypto
+------------------- 
+http://stackoverflow.com/questions/10990821/how-to-securely-store-credentials-password-in-android-application
+http://stackoverflow.com/questions/8184492/best-way-to-secure-android-app-sensitive-data
+http://developer.android.com/training/articles/security-tips.html
+http://developer.android.com/reference/java/security/KeyPairGenerator.html
+http://developer.android.com/reference/java/security/KeyPair.html
+http://developer.android.com/reference/java/security/KeyStore.html
+
+
+
+Journal
+-------
+
+
 22/05 : Ajout du signal de suppression des messages reçu dans la simulation
 
 26/05 : Réussite partielle d'envoi de texte via Nfc, ça marche dans un sens mais fait quelque chose de bizarre (alors que Baptiste et moi avons exactement le même smartphone tournant sur le même OS). 
@@ -98,6 +125,8 @@ pour le galaxy nexus, un AOSP (Android Open Source Project) de la version 5.1 Lo
 Envoi de message a contact ciblé fonctionnel, si le message envoyé n'est pas pour nous, on ne l'affiche pas.
 Pour l'instant, on envoie notre message au moment ou on l'écrit, dans l'activité SendMessage. Il faut que cette activité ajoute seulement a la base de messages à envoyer notre message, puis qu'on utilise l'activité principale pour synchroniser les messages (en cours, edit : fait).
 
+08/06 : Chiffrement des messages fonctionnel, les messages ne sont désormais visibles que par le destinataire
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
@@ -106,34 +135,11 @@ Structurer les données pour la création des bases : deux tables :
 - Créer un paquet contenant le message, la source et le destinataire que l'on enverra à la place de juste le message comme nous le faisons en ce moment - OK
 - Gérer le transfert des bases de messages - OK
 - n'afficher dans la liste de messages que les messages que l'on envoie et qu'on a recu qui sont pour nous
-- Intégrer le cryptage des messages
+- Intégrer le cryptage des messages - OK
 - Faire en sorte que l'on puisse préparer l'envoi de messages, on ecrit un message qui sera envoyé lors de la prochaine communication - OK
 - Implémenter les feedback
+- Implémenter timeout des messages et feedbacks
 - Système de conversation (?)
 
 
 Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer), invokebeam.
-
-
-
-
-Etat de la simulation 
----------------------
-- Envoi de messages avec intermédiaires fonctionnel
-- Lorsqu'un destinataire reçoit un message, il envoie un deleteSignal, tous les intermédiaires qui receveront le deletSignal supprimeront le message et transmetteront le deleteSignal. Si l'envoyeur recoit le deleteSignal, il est notifié de la bonne reception du message qu'il a envoyé et ne transmet pas le deleteSignal. 
-
-Reste à implémenter 
--------------------
-- Meilleur moyen de visualiser les messages et signaux qui transitent
-- Timeout sur les messages et signaux
-- Simulation de marche aléatoire des noeuds et apparition plus ou moins aléatoire de nouveaux messages
-
-
-Partie Crypto
-------------------- 
-http://stackoverflow.com/questions/10990821/how-to-securely-store-credentials-password-in-android-application
-http://stackoverflow.com/questions/8184492/best-way-to-secure-android-app-sensitive-data
-http://developer.android.com/training/articles/security-tips.html
-http://developer.android.com/reference/java/security/KeyPairGenerator.html
-http://developer.android.com/reference/java/security/KeyPair.html
-http://developer.android.com/reference/java/security/KeyStore.html
