@@ -11,6 +11,7 @@ import android.nfc.NfcEvent;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,12 +20,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 
 public class SendMessage extends Activity {
@@ -53,26 +62,23 @@ public class SendMessage extends Activity {
     public String getMyPublicKey(){
         KeyStore ks = null;
         RSAPublicKey publicKey = null;
+        String output = null;
         try {
             ks = KeyStore.getInstance("AndroidKeyStore");
             ks.load(null);
 
 
             KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry("Keys", null);
-            publicKey = (RSAPublicKey) keyEntry.getCertificate().getPublicKey();
+            if(keyEntry != null)
+                publicKey = (RSAPublicKey) keyEntry.getCertificate().getPublicKey();
 
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableEntryException e) {
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableEntryException e) {
             e.printStackTrace();
         }
-        return publicKey.toString();
+        if(publicKey != null) {
+            return Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);
+        }
+        else return null;
     }
 
     @Override
@@ -86,11 +92,20 @@ public class SendMessage extends Activity {
     }
 
     public void sendButton(View view) {
-        Message message = new Message(mEdit.getText().toString(), myPk, destPk);
-        Toast.makeText(SendMessage.this,
-                message.getPublicKeyDest(),
-                Toast.LENGTH_LONG).show();
+        byte[] text = getEncryptedMessage(mEdit.getText().toString());
+        Message message = new Message(text, myPk, destPk);
         sqLiteHelper.addMessage(message);
+    }
+
+    public byte[] getEncryptedMessage(String message){
+        CryptoHelper cryptoHelper = new CryptoHelper();
+
+        try {
+            return cryptoHelper.RSAEncrypt(message, destPk);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

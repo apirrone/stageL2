@@ -12,16 +12,15 @@ public class Message {
     private String uuid;
     private String publicKeySource;
     private String publicKeyDest;
+    private byte[] content;
 
-    private String content;
-
-    public Message(String content, String publicKeySource, String publicKeyDest) {
+    public Message(byte[] content, String publicKeySource, String publicKeyDest) {
         this.uuid = UUID.randomUUID().toString();
         this.publicKeySource = publicKeySource;
         this.publicKeyDest = publicKeyDest;
         this.content = content;
     }
-    public Message(String uuid, String content, String publicKeySource, String publicKeyDest) {
+    public Message(String uuid, byte[] content, String publicKeySource, String publicKeyDest) {
         this.uuid = uuid;
         this.publicKeySource = publicKeySource;
         this.publicKeyDest = publicKeyDest;
@@ -52,11 +51,11 @@ public class Message {
         this.publicKeyDest = publicKeyDest;
     }
 
-    public String getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 

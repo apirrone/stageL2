@@ -19,6 +19,7 @@
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,6 +49,10 @@
         <activity
             android:name=".BrowseMessages"
             android:label="@string/title_activity_browse_messages" >
+        </activity>
+        <activity
+            android:name=".TestAmer"
+            android:label="@string/title_activity_test_amer" >
         </activity>
     </application>
 

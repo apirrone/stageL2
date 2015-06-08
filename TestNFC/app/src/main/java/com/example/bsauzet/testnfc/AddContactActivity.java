@@ -12,6 +12,7 @@ import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Base64;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -154,25 +155,22 @@ public class AddContactActivity extends Activity{
     public String getMyPublicKey(){
         KeyStore ks = null;
         RSAPublicKey publicKey = null;
+        String output = null;
         try {
             ks = KeyStore.getInstance("AndroidKeyStore");
             ks.load(null);
 
 
             KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry("Keys", null);
-            publicKey = (RSAPublicKey) keyEntry.getCertificate().getPublicKey();
+            if(keyEntry != null)
+                publicKey = (RSAPublicKey) keyEntry.getCertificate().getPublicKey();
 
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableEntryException e) {
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableEntryException e) {
             e.printStackTrace();
         }
-        return publicKey.toString();
+        if(publicKey != null) {
+            return Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);
+        }
+        else return null;
     }
 }

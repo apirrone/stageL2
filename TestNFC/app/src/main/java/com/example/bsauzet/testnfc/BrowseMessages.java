@@ -28,7 +28,7 @@ public class BrowseMessages extends Activity {
         List<Message> messages = sqLiteHelper.getAllMessages();
         String[] lv_arr = new String[messages.size()];
         for(int i = 0 ; i < messages.size() ; i++){
-            lv_arr[i] = messages.get(i).getContent();
+            lv_arr[i] = messages.get(i).getContent().toString();
         }
         lv.setAdapter(new ArrayAdapter<String>(BrowseMessages.this,
                 android.R.layout.simple_list_item_1, lv_arr));

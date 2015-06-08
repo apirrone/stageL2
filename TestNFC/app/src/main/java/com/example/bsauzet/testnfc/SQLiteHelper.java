@@ -52,7 +52,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String CREATE_MESSAGES_TABLE = "CREATE TABLE messages ( " +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "uuid TEXT, " +
-                "content TEXT, " +
+                "content BLOB, " +
                 "idSource TEXT, " +
                 "idDest TEXT)";
 
@@ -189,7 +189,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         if(cursor != null)
             cursor.moveToFirst();
 
-        Message message = new Message(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+        Message message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
         return message;
     }
 
@@ -206,7 +206,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
                 messages.add(message);
             }while(cursor.moveToNext());
 

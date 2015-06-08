@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.security.KeyPairGeneratorSpec;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -23,11 +24,13 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPublicKey;
@@ -36,6 +39,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.security.auth.x500.X500Principal;
 
 
@@ -122,7 +128,7 @@ public class MainActivity extends Activity{
             for(int i = 0 ; i < nbMessages ; i++){
                 String uuid = new String(inNdefRecords[j].getPayload());
                 j++;
-                String message = new String(inNdefRecords[j].getPayload());
+                byte[] message =  inNdefRecords[j].getPayload();
                 j++;
                 String source = new String(inNdefRecords[j].getPayload());
                 j++;
@@ -148,15 +154,17 @@ public class MainActivity extends Activity{
                 }
             }
             if(newMess) {
-                Log.i("MyApp", "newMess");
-                Log.i("MyApp", "pkDest : "+mess.get(i).getPublicKeyDest());
-                Log.i("MyApp", "myPk : "+getMyPublicKey());
-                if (mess.get(i).getPublicKeyDest().equals(getMyPublicKey())) {
-                    Log.i("MyApp", "newMess : message for me");
-                    mTextView.setText(mess.get(i).getContent());
+                if (mess.get(i).getPublicKeyDest().equals(getMyPublicKey())) { //MESSAGE FOR ME
+                    CryptoHelper cryptoHelper = new CryptoHelper();
+                    String decryptedMessage = "null";
+                    try {
+                        decryptedMessage = cryptoHelper.RSADecrypt(mess.get(i).getContent(), getMyPrivateKey());
+                    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException e) {
+                        e.printStackTrace();
+                    }
+                    mTextView.setText(decryptedMessage);
                 }
                 sqLiteHelper.addMessage(mess.get(i));
-                Log.i("MyApp", "add to database");
 
             }
         }
@@ -200,6 +208,7 @@ public class MainActivity extends Activity{
                     .setEndDate(end)
                     .setSerialNumber(BigInteger.valueOf(1))
                     .setSubject(new X500Principal("CN=test1"))
+                    .setKeySize(4096)
                     .build());
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
@@ -234,20 +243,35 @@ public class MainActivity extends Activity{
             if(keyEntry != null)
                 publicKey = (RSAPublicKey) keyEntry.getCertificate().getPublicKey();
 
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableEntryException e) {
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableEntryException e) {
             e.printStackTrace();
         }
-        if(publicKey != null)
-            output = publicKey.toString();
-        return output;
+        if(publicKey != null) {
+            return Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);
+        }
+        else return null;
+    }
+
+    public PrivateKey getMyPrivateKey(){
+        KeyStore ks = null;
+        PrivateKey privateKey = null;
+        String output = null;
+        try {
+            ks = KeyStore.getInstance("AndroidKeyStore");
+            ks.load(null);
+
+
+            KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry("Keys", null);
+            if(keyEntry != null)
+                privateKey = keyEntry.getPrivateKey();
+
+        } catch (KeyStoreException | NoSuchAlgorithmException | IOException | CertificateException | UnrecoverableEntryException e) {
+            e.printStackTrace();
+        }
+        if(privateKey != null)
+            return privateKey;
+        else
+            return null;
     }
 
     public NdefMessage createNdefMessageAllMessages(){
@@ -276,7 +300,7 @@ public class MainActivity extends Activity{
                         NdefRecord.TNF_MIME_MEDIA,
                         "text/plain".getBytes(),
                         new byte[]{},
-                        messages.get(i).getContent().getBytes());
+                        messages.get(i).getContent());
                 j++;
                 ndefRecords[j] = new NdefRecord(
                         NdefRecord.TNF_MIME_MEDIA,
