@@ -1,6 +1,5 @@
 package com.example.bsauzet.testnfc;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -9,40 +8,23 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
-import android.nfc.tech.Ndef;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.security.KeyPairGeneratorSpec;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
-import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.security.auth.x500.X500Principal;
 
 
 public class MainActivity extends Activity{
@@ -61,9 +43,9 @@ public class MainActivity extends Activity{
 
         Intent intent = getIntent();
 
-        if(getMyPublicKey() == null)
-            generateKeys();
-        Log.i("myApp", getMyPublicKey());
+        if(KeysHelper.getMyPublicKey() == null)
+            KeysHelper.generateKeys(getApplicationContext());
+        Log.i("myApp", KeysHelper.getMyPublicKey());
 
         sqLiteHelper = new SQLiteHelper(this);
 
@@ -154,11 +136,10 @@ public class MainActivity extends Activity{
                 }
             }
             if(newMess) {
-                if (mess.get(i).getPublicKeyDest().equals(getMyPublicKey())) { //MESSAGE FOR ME
-                    CryptoHelper cryptoHelper = new CryptoHelper();
+                if (mess.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) { //MESSAGE FOR ME
                     String decryptedMessage = "null";
                     try {
-                        decryptedMessage = cryptoHelper.RSADecrypt(mess.get(i).getContent(), getMyPrivateKey());
+                        decryptedMessage = CryptoHelper.RSADecrypt(mess.get(i).getContent(), KeysHelper.getMyPrivateKey());
                     } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException e) {
                         e.printStackTrace();
                     }
@@ -185,38 +166,6 @@ public class MainActivity extends Activity{
         nfcAdapter.disableForegroundDispatch(this);
     }
 
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public void generateKeys(){
-        Calendar cal = Calendar.getInstance();
-        Date now = cal.getTime();
-        cal.add(Calendar.YEAR, 1);
-        Date end = cal.getTime();
-
-        KeyPairGenerator kpg = null;
-        try {
-            kpg = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        }
-        try {
-            kpg.initialize(new KeyPairGeneratorSpec.Builder(getApplicationContext())
-                    .setAlias("Keys")
-                    .setStartDate(now)
-                    .setEndDate(end)
-                    .setSerialNumber(BigInteger.valueOf(1))
-                    .setSubject(new X500Principal("CN=test1"))
-                    .setKeySize(4096)
-                    .build());
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        }
-
-        kpg.generateKeyPair();
-    }
-
     public void goToAddContact(View view) {
         Intent intent = new Intent(this, AddContactActivity.class);
         intent.setAction("NewActivity");
@@ -229,49 +178,6 @@ public class MainActivity extends Activity{
         Intent intent = new Intent(this, BrowseContacts.class);
         intent.setAction("NewActivity");
         startActivity(intent);
-    }
-    public String getMyPublicKey(){
-        KeyStore ks = null;
-        RSAPublicKey publicKey = null;
-        String output = null;
-        try {
-            ks = KeyStore.getInstance("AndroidKeyStore");
-            ks.load(null);
-
-
-            KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry("Keys", null);
-            if(keyEntry != null)
-                publicKey = (RSAPublicKey) keyEntry.getCertificate().getPublicKey();
-
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableEntryException e) {
-            e.printStackTrace();
-        }
-        if(publicKey != null) {
-            return Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);
-        }
-        else return null;
-    }
-
-    public PrivateKey getMyPrivateKey(){
-        KeyStore ks = null;
-        PrivateKey privateKey = null;
-        String output = null;
-        try {
-            ks = KeyStore.getInstance("AndroidKeyStore");
-            ks.load(null);
-
-
-            KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry("Keys", null);
-            if(keyEntry != null)
-                privateKey = keyEntry.getPrivateKey();
-
-        } catch (KeyStoreException | NoSuchAlgorithmException | IOException | CertificateException | UnrecoverableEntryException e) {
-            e.printStackTrace();
-        }
-        if(privateKey != null)
-            return privateKey;
-        else
-            return null;
     }
 
     public NdefMessage createNdefMessageAllMessages(){
@@ -325,6 +231,6 @@ public class MainActivity extends Activity{
     }
 
     public void viewMessagesButton(View view) {
-        startActivity(new Intent(this, BrowseMessages.class));
+        startActivity(new Intent(this, BrowseConversations.class));
     }
 }

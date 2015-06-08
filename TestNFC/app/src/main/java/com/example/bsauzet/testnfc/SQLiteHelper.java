@@ -193,13 +193,62 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return message;
     }
 
+    public List<Message> getMessagesFromPublicKeyDest(String pbk){
+
+        List<Message> messages = new LinkedList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_MESSAGES,
+                COLUMNS_MESSAGES,
+                "idDest = ?",
+                new String[]{pbk},
+                null,
+                null,
+                null,
+                null);
+
+
+        Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+
+        return messages;
+    }
+
+    public List<Message> getMessagesFromPublicKeySource(String pbk){
+
+        List<Message> messages = new LinkedList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_MESSAGES,
+                COLUMNS_MESSAGES,
+                "idSource = ?",
+                new String[]{pbk},
+                null,
+                null,
+                null,
+                null);
+
+
+        Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+
+        return messages;
+    }
 
     public List<Message> getAllMessages(){
         List<Message> messages = new LinkedList<Message>();
 
         String query = "SELECT * FROM " + TABLE_MESSAGES;
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
         Message message = null;

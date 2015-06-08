@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -48,7 +49,7 @@ public class AddContactActivity extends Activity{
         nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
             @Override public NdefMessage createNdefMessage(NfcEvent event) {
 
-                String stringOut = getMyPublicKey();
+                String stringOut = KeysHelper.getMyPublicKey();
 
                 byte[] bytesOut = stringOut.getBytes();
 
@@ -152,25 +153,4 @@ public class AddContactActivity extends Activity{
         }
     }
 
-    public String getMyPublicKey(){
-        KeyStore ks = null;
-        RSAPublicKey publicKey = null;
-        String output = null;
-        try {
-            ks = KeyStore.getInstance("AndroidKeyStore");
-            ks.load(null);
-
-
-            KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry("Keys", null);
-            if(keyEntry != null)
-                publicKey = (RSAPublicKey) keyEntry.getCertificate().getPublicKey();
-
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableEntryException e) {
-            e.printStackTrace();
-        }
-        if(publicKey != null) {
-            return Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);
-        }
-        else return null;
-    }
 }

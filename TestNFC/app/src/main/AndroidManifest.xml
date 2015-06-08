@@ -19,7 +19,6 @@
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -53,6 +52,10 @@
         <activity
             android:name=".TestAmer"
             android:label="@string/title_activity_test_amer" >
+        </activity>
+        <activity
+            android:name=".BrowseConversations"
+            android:label="@string/title_activity_browse_conversations" >
         </activity>
     </application>
 

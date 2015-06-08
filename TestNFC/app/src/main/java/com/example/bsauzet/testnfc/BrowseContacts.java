@@ -61,7 +61,6 @@ public class BrowseContacts extends Activity {
         Intent intent = new Intent(this, SendMessage.class);
         intent.putExtra("name", name);
         intent.putExtra("pk", sqLiteHelper.getUserByName(name).getPublicKey());
-        Log.i("MyApp", sqLiteHelper.getUserByName(name).getPublicKey());
         intent.setAction("NewActivity");
         startActivity(intent);
     }

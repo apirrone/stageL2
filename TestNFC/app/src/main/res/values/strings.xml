@@ -9,4 +9,5 @@
     <string name="title_activity_send_message">SendMessage</string>
     <string name="title_activity_browse_messages">BrowseMessages</string>
     <string name="title_activity_test_amer">TestAmer</string>
+    <string name="title_activity_browse_conversations">BrowseConversations</string>
 </resources>
