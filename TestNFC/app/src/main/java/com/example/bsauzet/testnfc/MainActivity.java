@@ -10,18 +10,12 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 
 public class MainActivity extends Activity{
@@ -48,6 +42,17 @@ public class MainActivity extends Activity{
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 
+        double now = (double)System.currentTimeMillis()/1000.0;
+
+        List<Message> messages = sqLiteHelper.getAllMessages();
+        for (int i = 0 ; i < messages.size(); i++)
+            if(!messages.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey()))//Si le message n'est pas pour nous
+                if(messages.get(i).getSent())//S'il a déjà été envoyé au moins une fois
+                    if(now - messages.get(i).getTimeout() > Global.INITIAL_TIMEOUT)//Si son timeout est écoulé
+                        sqLiteHelper.deleteMessage(messages.get(i));               //Suppression du message
+
+
+
         nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
             @Override public NdefMessage createNdefMessage(NfcEvent event) {
                 NdefMessage mess = createNdefMessageAllMessages();
@@ -55,6 +60,8 @@ public class MainActivity extends Activity{
                 return mess;
             }
         }, this);
+
+
 
         checkAndProcessBeamIntent(intent);
 
@@ -126,14 +133,6 @@ public class MainActivity extends Activity{
                 }
             }
             if(newMess) {
-                if (mess.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) { //MESSAGE FOR ME
-                    String decryptedMessage = "null";
-                    try {
-                        decryptedMessage = CryptoHelper.RSADecrypt(mess.get(i).getContent(), KeysHelper.getMyPrivateKey());
-                    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException e) {
-                        e.printStackTrace();
-                    }
-                }
                 sqLiteHelper.addMessage(mess.get(i));
             }
         }
@@ -181,6 +180,9 @@ public class MainActivity extends Activity{
 
             int j = 1;
             for (int i = 0; i < messages.size(); i++) {
+                if(messages.get(i).getSent() == false)
+                    sqLiteHelper.updateSent(messages.get(i));
+
                 ndefRecords[j] = new NdefRecord(
                         NdefRecord.TNF_MIME_MEDIA,
                         "text/plain".getBytes(),

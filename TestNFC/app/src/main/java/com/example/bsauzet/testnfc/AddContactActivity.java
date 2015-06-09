@@ -1,5 +1,6 @@
 package com.example.bsauzet.testnfc;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -8,10 +9,22 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Base64;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
+import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 
 
 public class AddContactActivity extends Activity{

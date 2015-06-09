@@ -31,9 +31,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_MESSAGES_IDSOURCE = "idSource";
     private static final String KEY_MESSAGES_IDDEST = "idDest";
     private static final String KEY_MESSAGES_CONTENT = "content";
+    private static final String KEY_MESSAGES_TIMEOUT ="timeout";
+    private static final String KEY_MESSAGES_SENT = "sent";
 
     private static final String[] COLUMNS_USERS = {KEY_USERS_ID, KEY_USERS_PUBLICKEY, KEY_USERS_NAME};
-    private static final String[] COLUMNS_MESSAGES = {KEY_MESSAGES_ID, KEY_MESSAGES_UUID, KEY_MESSAGES_CONTENT, KEY_MESSAGES_IDSOURCE, KEY_MESSAGES_IDDEST};
+    private static final String[] COLUMNS_MESSAGES = {KEY_MESSAGES_ID, KEY_MESSAGES_UUID, KEY_MESSAGES_CONTENT, KEY_MESSAGES_IDSOURCE, KEY_MESSAGES_IDDEST, KEY_MESSAGES_TIMEOUT, KEY_MESSAGES_SENT};
 
 
     public SQLiteHelper(Context context){
@@ -53,7 +55,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "uuid TEXT, " +
                 "content BLOB, " +
                 "idSource TEXT, " +
-                "idDest TEXT)";
+                "idDest TEXT, " +
+                "timeout REAL, " +
+                "sent INTEGER )";
 
         db.execSQL(CREATE_USERS_TABLE);
         db.execSQL(CREATE_MESSAGES_TABLE);
@@ -116,7 +120,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         if(cursor != null)
             if(cursor.moveToFirst())
                 user = new User(cursor.getString(2), cursor.getString(1));
-
+        db.close();
         return user;
     }
 
@@ -136,7 +140,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 users.add(user);
             }while(cursor.moveToNext());
 
-
+        db.close();
         return users;
     }
 
@@ -166,7 +170,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_MESSAGES_IDSOURCE, message.getPublicKeySource());
         values.put(KEY_MESSAGES_IDDEST, message.getPublicKeyDest());
         values.put(KEY_MESSAGES_CONTENT, message.getContent());
-
+        values.put(KEY_MESSAGES_TIMEOUT, message.getTimeout());
+        values.put(KEY_MESSAGES_SENT, (message.getSent() ? 1 : 0));
         db.insert(TABLE_MESSAGES, null, values);
 
         db.close();
@@ -188,7 +193,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         if(cursor != null)
             cursor.moveToFirst();
 
-        Message message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+        Message message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+        db.close();
         return message;
     }
 
@@ -209,11 +215,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
                 messages.add(message);
             }while(cursor.moveToNext());
 
-
+        db.close();
         return messages;
     }
 
@@ -234,11 +240,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
                 messages.add(message);
             }while(cursor.moveToNext());
 
-
+        db.close();
         return messages;
     }
 
@@ -254,12 +260,59 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
                 messages.add(message);
             }while(cursor.moveToNext());
 
-
+        db.close();
         return messages;
+    }
+
+    public List<Message> getMessagesFromContentAndSender(String content, String sender){
+        List<Message> messages = new LinkedList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String userPk = getUserByName(sender).getPublicKey();
+
+        Cursor cursor = db.query(TABLE_MESSAGES,
+                COLUMNS_MESSAGES,
+                "idSource = ? ",
+                new String[]{userPk},
+                null,
+                null,
+                null,
+                null);
+
+
+        Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+        List<Message> messagesToReturn = new LinkedList<Message>();
+        for(int i = 0 ; i < messages.size() ; i++) {
+            Log.i("TAMERE", "content : " + content + " --- messCntent : " + messages.get(i).getContent().toString());
+            if (messages.get(i).getContent().equals(content.getBytes())) {
+                messagesToReturn.add(messages.get(i));
+                Log.i("TAMERE", "zrfqzergszegr");
+            } else
+                Log.i("TAMERE", "qr");
+        }
+
+
+
+        db.close();
+        return messagesToReturn;
+    }
+
+    public void updateSent(Message message){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_MESSAGES_SENT, 1);
+        db.update(TABLE_MESSAGES, values, KEY_MESSAGES_UUID + "=?", new String[]{message.getUuid()});
+        db.close();
     }
 
     public void deleteMessage(Message message){

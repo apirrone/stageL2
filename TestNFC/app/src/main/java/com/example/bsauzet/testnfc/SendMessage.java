@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -54,6 +55,8 @@ public class SendMessage extends Activity {
         Message message = new Message(text, myPk, destPk);
 
         sqLiteHelper.addMessage(message);
+        Toast.makeText(SendMessage.this, "Message sent", Toast.LENGTH_SHORT).show();
+
     }
 
     public byte[] getEncryptedMessage(String message){

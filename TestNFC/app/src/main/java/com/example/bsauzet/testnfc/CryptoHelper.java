@@ -1,6 +1,7 @@
 package com.example.bsauzet.testnfc;
 
 import android.util.Base64;
+import android.util.Log;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -37,16 +38,24 @@ public class CryptoHelper {
     }
 
 
-    public static String RSADecrypt(final byte[] encBarr, PrivateKey privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
+    public static String RSADecrypt(final byte[] encBarr, PrivateKey privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, NoSuchProviderException {
+        String res = null;
+
         Cipher cipher1 = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
         cipher1.init(Cipher.DECRYPT_MODE, privateKey);
 
-        byte[] decBarr = cipher1.doFinal(encBarr);
+        byte[] decBarr = new byte[0];
+        try {
+            decBarr = cipher1.doFinal(encBarr);
+        } catch (BadPaddingException e) {
+            Log.i("myApp", "BadPadding");
+            e.printStackTrace();
+        }
 
         if(decBarr!=null)
-             return new String(decBarr);
-        else
-            return null;
+             res = new String(decBarr);
+
+        return res;
     }
 }
 
