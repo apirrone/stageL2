@@ -132,6 +132,10 @@ De plus, pour le transfert de messages via NFC (test avec 5 messages), la durée
 
 On pense avoir un problème d'affichage de message quand le message est corrompu (si on éloigne trop vite les téléphones).
 
+09/06 : 
+Problème corrigé, il ne venait pas de la corruption des données mais des messages envoyés par un expéditeur connu vers un autre destinataire que nous => affichage des messages qui nous sont destinés + les autres => crash.
+Début de l'implémentation des timeout sur les messages : On utilise un booléen "Sent" pour déterminer si le message a été envoyé ou non, et on utilise un int "timeout" qui nous servira à marquer la péremption du message.
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
