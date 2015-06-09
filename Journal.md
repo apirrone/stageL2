@@ -130,7 +130,7 @@ On peut désormais parcourir les messages qui nous sont destinés en fonction de
 Nouveau problème : Lorsque l'on affiche les messages, on lance la procédure de déchiffrage de tous les messages de la conversation ( les messages ne sont pas stockés en clair dans la base de donnée) ce qui est très gourmand en ressources => lenteur de l'application.
 De plus, pour le transfert de messages via NFC (test avec 5 messages), la durée du transfert est assez longue, impliquant un contact aussi long (NB : ceci dépendra du modèle de téléphone : de nexus S à nexus 4 : 5 secondes , de Nexus 4 à Nexus 4 : 1,5s , de Nexus 4 à Nexus S : 7,74s).
 
-On pense avoir un problème d'affichage de message quadn le message est corrompu (si on éloigne trop vite les téléphones).
+On pense avoir un problème d'affichage de message quand le message est corrompu (si on éloigne trop vite les téléphones).
 
 TODO
 ---------------------
@@ -145,6 +145,7 @@ Structurer les données pour la création des bases : deux tables :
 - Implémenter les feedback
 - Implémenter timeout des messages et feedbacks
 - Système de conversation (?)
+- Suppression manuelle de contact/message
 
 
 Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer), invokebeam.
