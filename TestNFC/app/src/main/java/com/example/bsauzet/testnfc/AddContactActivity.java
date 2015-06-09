@@ -1,6 +1,5 @@
 package com.example.bsauzet.testnfc;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -9,22 +8,10 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Base64;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import java.io.IOException;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
-import java.security.interfaces.RSAPublicKey;
-import java.util.List;
 
 
 public class AddContactActivity extends Activity{
@@ -32,19 +19,18 @@ public class AddContactActivity extends Activity{
     NfcAdapter nfcAdapter;
     EditText editText;
     SQLiteHelper sqLiteHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
 
         editText = (EditText)findViewById(R.id.editText);
-
         nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 
         Intent intent = getIntent();
 
         sqLiteHelper = new SQLiteHelper(this);
-        //sqLiteHelper.deleteAllUsers(sqLiteHelper.getWritableDatabase());
 
         nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
             @Override public NdefMessage createNdefMessage(NfcEvent event) {
@@ -66,7 +52,6 @@ public class AddContactActivity extends Activity{
         }, this);
 
         checkAndProcessBeamIntent(intent);
-        addContactDataBase("publickitamere", "testPasMoi");
     }
 
     @Override
@@ -74,10 +59,6 @@ public class AddContactActivity extends Activity{
         super.onResume();
 
         Intent intent = getIntent();
-
-        Toast.makeText(AddContactActivity.this,
-                "onResume : "+intent.getAction().toString(),
-                Toast.LENGTH_LONG).show();
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
@@ -101,29 +82,8 @@ public class AddContactActivity extends Activity{
                     Toast.LENGTH_LONG).show();
     }
 
-    public void checkUserInDataBase(String publicKey){
-
-        List<User> users = sqLiteHelper.getAllUsers();
-
-        for(int i = users.size()-1 ; i >=0 ; i--){
-            if(users.get(i).getPublicKey().equals(publicKey)) {
-                Toast.makeText(AddContactActivity.this,
-                        "check : " + users.get(i).getName(),
-                        Toast.LENGTH_LONG).show();
-                break;
-            }
-        }
-
-
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
-        //super.onNewIntent(intent);
-        //setIntent(intent);
-        Toast.makeText(AddContactActivity.this,
-                "OnNewIntent : "+intent.getAction().toString(),
-                Toast.LENGTH_LONG).show();
         checkAndProcessBeamIntent(intent);
     }
 
@@ -148,7 +108,6 @@ public class AddContactActivity extends Activity{
             String inMsg = new String(NdefRecord_0.getPayload());
 
             addContactDataBase(inMsg, editText.getText().toString());
-            //checkUserInDataBase(inMsg);
 
         }
     }

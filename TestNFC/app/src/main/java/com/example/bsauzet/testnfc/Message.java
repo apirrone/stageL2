@@ -1,13 +1,11 @@
 package com.example.bsauzet.testnfc;
 
-import java.security.PublicKey;
 import java.util.UUID;
 
 /**
  * Created by Antoine on 29/05/2015.
  */
 public class Message {
-
 
     private String uuid;
     private String publicKeySource;

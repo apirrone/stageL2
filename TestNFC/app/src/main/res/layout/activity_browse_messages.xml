@@ -10,7 +10,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listView"
+        android:layout_centerHorizontal="true"
+        android:choiceMode="none"
+        android:layout_below="@+id/contactName" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/contactName"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:choiceMode="none" />
+        android:textStyle="bold" />
 </RelativeLayout>

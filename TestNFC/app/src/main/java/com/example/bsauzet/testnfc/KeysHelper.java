@@ -32,10 +32,10 @@ public class KeysHelper {
         KeyStore ks = null;
         RSAPublicKey publicKey = null;
         String output = null;
+
         try {
             ks = KeyStore.getInstance("AndroidKeyStore");
             ks.load(null);
-
 
             KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry)ks.getEntry("Keys", null);
             if(keyEntry != null)
@@ -44,10 +44,11 @@ public class KeysHelper {
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableEntryException e) {
             e.printStackTrace();
         }
-        if(publicKey != null) {
+        if(publicKey != null)
             return Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);
-        }
-        else return null;
+
+        else
+            return null;
     }
 
     public static PrivateKey getMyPrivateKey(){
@@ -71,8 +72,6 @@ public class KeysHelper {
         else
             return null;
     }
-
-
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static void generateKeys(Context context){

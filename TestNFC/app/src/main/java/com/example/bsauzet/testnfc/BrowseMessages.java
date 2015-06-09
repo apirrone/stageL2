@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -30,22 +31,30 @@ public class BrowseMessages extends Activity {
         setContentView(R.layout.activity_browse_messages);
 
         Intent intent = getIntent();
+
         userName = intent.getStringExtra("name");
         userPk = intent.getStringExtra("publicKey");
 
+        TextView tv = (TextView)findViewById(R.id.contactName);
+        tv.setText(userName);
+
         lv = (ListView)findViewById(R.id.listView);
         sqLiteHelper = new SQLiteHelper(this);
+
         List<Message> messages = sqLiteHelper.getMessagesFromPublicKeySource(userPk);
-        String[] lv_arr = new String[messages.size()];
-        for(int i = 0 ; i < messages.size() ; i++){
-            try {
-                lv_arr[i] = CryptoHelper.RSADecrypt(messages.get(i).getContent(), KeysHelper.getMyPrivateKey());
-            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException e) {
-                e.printStackTrace();
-            }
+
+        if(messages != null) {
+            String[] lv_arr = new String[messages.size()];
+            for (int i = 0; i < messages.size(); i++)
+                try {
+                    lv_arr[i] = CryptoHelper.RSADecrypt(messages.get(i).getContent(), KeysHelper.getMyPrivateKey());
+                } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException e) {
+                    e.printStackTrace();
+                }
+
+            lv.setAdapter(new ArrayAdapter<String>(BrowseMessages.this, android.R.layout.simple_list_item_1, lv_arr));
         }
-        lv.setAdapter(new ArrayAdapter<String>(BrowseMessages.this,
-                android.R.layout.simple_list_item_1, lv_arr));
+
     }
 
 }

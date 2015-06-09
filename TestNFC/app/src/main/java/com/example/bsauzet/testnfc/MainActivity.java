@@ -10,11 +10,8 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +26,6 @@ import javax.crypto.NoSuchPaddingException;
 
 public class MainActivity extends Activity{
 
-    private TextView mTextView;
     private EditText mEdit;
 
     NfcAdapter nfcAdapter;
@@ -45,11 +41,9 @@ public class MainActivity extends Activity{
 
         if(KeysHelper.getMyPublicKey() == null)
             KeysHelper.generateKeys(getApplicationContext());
-        Log.i("myApp", KeysHelper.getMyPublicKey());
 
         sqLiteHelper = new SQLiteHelper(this);
 
-        mTextView = (TextView)findViewById(R.id.retour);
         mEdit = (EditText)findViewById(R.id.editText);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
@@ -71,10 +65,6 @@ public class MainActivity extends Activity{
         super.onResume();
 
         Intent intent = getIntent();
-
-        Toast.makeText(MainActivity.this,
-                intent.getAction().toString(),
-                Toast.LENGTH_SHORT).show();
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
@@ -118,7 +108,6 @@ public class MainActivity extends Activity{
                 j++;
                 incMessages.add(new Message(uuid, message, source, dest));
             }
-            Log.i("MyApp", "size incMessages : "+incMessages.size());
 
             addNotKnownMessages(incMessages);
 
@@ -127,6 +116,7 @@ public class MainActivity extends Activity{
 
     public void addNotKnownMessages(ArrayList<Message> mess){
         List<Message> myMessages = sqLiteHelper.getAllMessages();
+
         for(int i = 0 ; i < mess.size() ; i++) {
             boolean newMess = true;
             for (int j = 0; j < myMessages.size(); j++) {
@@ -143,10 +133,8 @@ public class MainActivity extends Activity{
                     } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException e) {
                         e.printStackTrace();
                     }
-                    mTextView.setText(decryptedMessage);
                 }
                 sqLiteHelper.addMessage(mess.get(i));
-
             }
         }
     }
@@ -154,9 +142,6 @@ public class MainActivity extends Activity{
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Toast.makeText(MainActivity.this,
-                intent.getAction().toString(),
-                Toast.LENGTH_LONG).show();
         checkAndProcessBeamIntent(intent);
     }
 

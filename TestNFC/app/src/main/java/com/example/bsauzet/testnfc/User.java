@@ -1,8 +1,5 @@
 package com.example.bsauzet.testnfc;
 
-import java.security.KeyPair;
-import java.security.PublicKey;
-
 /**
  * Created by Antoine on 28/05/2015.
  */

@@ -52,6 +52,7 @@ public class SendMessage extends Activity {
     public void sendButton(View view) {
         byte[] text = getEncryptedMessage(mEdit.getText().toString());
         Message message = new Message(text, myPk, destPk);
+
         sqLiteHelper.addMessage(message);
     }
 
