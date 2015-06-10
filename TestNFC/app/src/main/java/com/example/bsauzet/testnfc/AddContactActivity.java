@@ -121,6 +121,8 @@ public class AddContactActivity extends Activity{
             String inMsg = new String(NdefRecord_0.getPayload());
 
             addContactDataBase(inMsg, editText.getText().toString());
+            Toast.makeText(AddContactActivity.this, "User successfully added", Toast.LENGTH_SHORT).show();
+            finish();
 
         }
     }

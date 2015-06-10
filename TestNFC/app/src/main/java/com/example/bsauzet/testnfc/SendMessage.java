@@ -56,6 +56,7 @@ public class SendMessage extends Activity {
 
         sqLiteHelper.addMessage(message);
         Toast.makeText(SendMessage.this, "Message sent", Toast.LENGTH_SHORT).show();
+        finish();
 
     }
 

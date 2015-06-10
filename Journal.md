@@ -138,6 +138,11 @@ Début de l'implémentation des timeout sur les messages : On utilise un boolée
 
 - Timeout fonctionnel. Next step : ne pas supprimer les messages qui nous sont destinés et ajouter une fonctionnalité de suppression manuelle.
 
+
+10/06 :
+Les messages qui nous sont destinés ne sont pas supprimés par le timeout. 
+Petites modifications d'utilisation : lorsque l'on envoie un message, après avoir appuyé sur "send" on retourne à l'activité principale, tout comme après avoir ajouté un contact.
+Envoi corrigé : on n'envoie plus que les messages qui ne nous sont pas destinés => gain de temps en synchronisation
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :

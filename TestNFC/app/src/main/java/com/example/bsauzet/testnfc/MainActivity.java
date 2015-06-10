@@ -69,6 +69,7 @@ public class MainActivity extends Activity{
 
 
 
+
         checkAndProcessBeamIntent(intent);
 
     }
@@ -176,7 +177,7 @@ public class MainActivity extends Activity{
 
     public NdefMessage createNdefMessageAllMessages(){
 
-        List<Message> messages = sqLiteHelper.getAllMessages();
+        List<Message> messages = sqLiteHelper.getAllMessagesButMines();
         if(!messages.isEmpty()) {
             String nbMessages = String.valueOf(messages.size());
 

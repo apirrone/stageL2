@@ -45,7 +45,9 @@ public class BrowseContacts extends Activity {
 
         });
 
+
     }
+
 
 
     public void goToSendActivity(String name){
@@ -54,6 +56,8 @@ public class BrowseContacts extends Activity {
         intent.putExtra("pk", sqLiteHelper.getUserByName(name).getPublicKey());
         intent.setAction("NewActivity");
         startActivity(intent);
+        finish();
     }
+
 
 }
