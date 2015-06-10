@@ -51,14 +51,17 @@ public class BrowseMessages extends Activity {
         if(messages != null) {
             ArrayList<String> temp = new ArrayList<String>();
 
-            for (int i = 0; i < messages.size(); i++)
-                if(messages.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) {
+            for (int i = 0; i < messages.size(); i++) {
+                //MESSAGE FOR ME
+                if (messages.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) {
                     try {
                         temp.add(CryptoHelper.RSADecrypt(messages.get(i).getContent(), KeysHelper.getMyPrivateKey()));
-                    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | NoSuchProviderException e) {
+                    } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchProviderException | InvalidKeyException e) {
                         e.printStackTrace();
                     }
                 }
+            }
+
             if(temp.size()>0){
                 String[] lv_arr = new String[temp.size()];
                 for(int i = 0 ; i < temp.size() ; i++)
@@ -81,7 +84,7 @@ public class BrowseMessages extends Activity {
                             List<Message> messagesToDelete = sqLiteHelper.getMessagesFromContentAndSender(itemToDelete, userName);
                             public void onClick(DialogInterface dialog, int which) {
                                 for(int i = 0 ; i < messagesToDelete.size() ; i++)
-                                    sqLiteHelper.deleteMessage(messages.get(i));
+                                    sqLiteHelper.deleteMessage(messagesToDelete.get(i));
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

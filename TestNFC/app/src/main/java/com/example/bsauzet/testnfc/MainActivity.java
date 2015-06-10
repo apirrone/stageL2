@@ -14,8 +14,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 
 public class MainActivity extends Activity{
@@ -87,7 +93,7 @@ public class MainActivity extends Activity{
     }
 
 
-    private void checkAndProcessBeamIntent(Intent intent) {
+    private void checkAndProcessBeamIntent(Intent intent){
         String action = intent.getAction();
 
         if(action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)){
@@ -116,12 +122,16 @@ public class MainActivity extends Activity{
                 incMessages.add(new Message(uuid, message, source, dest));
             }
 
-            addNotKnownMessages(incMessages);
+            try {
+                addNotKnownMessages(incMessages);
+            } catch (InvalidKeyException | NoSuchProviderException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException e) {
+                e.printStackTrace();
+            }
 
         }
     }
 
-    public void addNotKnownMessages(ArrayList<Message> mess){
+    public void addNotKnownMessages(ArrayList<Message> mess) throws IllegalBlockSizeException, InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException, NoSuchPaddingException {
         List<Message> myMessages = sqLiteHelper.getAllMessages();
 
         for(int i = 0 ; i < mess.size() ; i++) {
