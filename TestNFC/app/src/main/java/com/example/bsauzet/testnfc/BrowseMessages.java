@@ -86,6 +86,8 @@ public class BrowseMessages extends Activity {
                                 for(int i = 0 ; i < messagesToDelete.size() ; i++)
                                     sqLiteHelper.deleteMessage(messagesToDelete.get(i));
                             }
+
+
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
