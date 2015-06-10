@@ -8,8 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 /**
  * Created by Antoine on 29/05/2015.
@@ -318,15 +324,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         List<Message> messagesToReturn = new LinkedList<Message>();
         for(int i = 0 ; i < messages.size() ; i++) {
-            Log.i("TAMERE", "content : " + content + " --- messCntent : " + messages.get(i).getContent().toString());
-            if (messages.get(i).getContent().equals(content.getBytes())) {
+            String content1 = null;
+            try {
+                content1 = CryptoHelper.RSADecrypt(messages.get(i).getContent(), KeysHelper.getMyPrivateKey());
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchProviderException | InvalidKeyException e) {
+                e.printStackTrace();
+            }
+
+            if (content1.equals(content))
                 messagesToReturn.add(messages.get(i));
-                Log.i("TAMERE", "zrfqzergszegr");
-            } else
-                Log.i("TAMERE", "qr");
-
-
-
         }
 
 
