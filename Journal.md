@@ -143,6 +143,9 @@ Début de l'implémentation des timeout sur les messages : On utilise un boolée
 Les messages qui nous sont destinés ne sont pas supprimés par le timeout. 
 Petites modifications d'utilisation : lorsque l'on envoie un message, après avoir appuyé sur "send" on retourne à l'activité principale, tout comme après avoir ajouté un contact.
 Envoi corrigé : on n'envoie plus que les messages qui ne nous sont pas destinés => gain de temps en synchronisation
+
+
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
@@ -156,7 +159,9 @@ Structurer les données pour la création des bases : deux tables :
 - Implémenter les feedback
 - Implémenter timeout des messages et feedbacks
 - Système de conversation (?)
-- Suppression manuelle de contact/message
+- Suppression manuelle de messages OK
+- Suppression manuelle de contacts OK
+
 
 
 Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer), invokebeam.
