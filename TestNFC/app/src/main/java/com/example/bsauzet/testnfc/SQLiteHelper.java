@@ -299,6 +299,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 Log.i("TAMERE", "zrfqzergszegr");
             } else
                 Log.i("TAMERE", "qr");
+
+
+
         }
 
 
