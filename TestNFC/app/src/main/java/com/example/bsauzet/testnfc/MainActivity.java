@@ -14,8 +14,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 
 public class MainActivity extends Activity{
@@ -60,6 +66,7 @@ public class MainActivity extends Activity{
                 return mess;
             }
         }, this);
+
 
 
 
@@ -166,7 +173,7 @@ public class MainActivity extends Activity{
 
     public NdefMessage createNdefMessageAllMessages(){
 
-        List<Message> messages = sqLiteHelper.getAllMessages();
+        List<Message> messages = sqLiteHelper.getAllMessagesButMines();
         if(!messages.isEmpty()) {
             String nbMessages = String.valueOf(messages.size());
 

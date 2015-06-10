@@ -223,6 +223,31 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return messages;
     }
 
+    public List<Message> getAllMessagesButMines(){
+        List<Message> messages = new LinkedList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_MESSAGES,
+            COLUMNS_MESSAGES,
+            "idDest <> ?",
+             new String[]{KeysHelper.getMyPublicKey()},
+             null,
+             null,
+             null,
+             null);
+
+        Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+        db.close();
+        return messages;
+
+
+    }
+
     public List<Message> getMessagesFromPublicKeySource(String pbk){
 
         List<Message> messages = new LinkedList<Message>();
