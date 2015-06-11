@@ -144,7 +144,18 @@ Les messages qui nous sont destinés ne sont pas supprimés par le timeout.
 Petites modifications d'utilisation : lorsque l'on envoie un message, après avoir appuyé sur "send" on retourne à l'activité principale, tout comme après avoir ajouté un contact.
 Envoi corrigé : on n'envoie plus que les messages qui ne nous sont pas destinés => gain de temps en synchronisation
 
+11/06 :
+On s'attaque à l'implémentation du système de conversation. 
+Une conversation implique : 
+- connaître les messages reçus
+- connaître les messages envoyés
+- les messages doivent apparaître dans l'ordre chronologique d'arrivée/envoi.
 
+Sur le modèle que nous proposons actuellement, pour afficher une "conversation", nous sommes bloqués par le chiffrement des messages que l'on envoie(besoin de la clé privée du destinataire pour déchiffrer le message, attribut inaccessible par construction). Si on affiche ce message dans la conversation, on obtient seulement une version chiffrée du message envoyé. Or, on souhaiterait conserver le message en clair dans la conversation, sans pour autant transmettre cette version claire du message.
+
+Pour pallier ce problème, nous avons décidé de rajouter une table dans notre base de données nommée Chat. 
+Lors de l'envoi d'un message, le message sera ajouté à la table Chat, puis chiffré, puis ajouté à la table Messages. 
+Ainsi, on conserve le transfert de messages chiffrés, tout en établissant une trace de la conversation que l'on a eue avec un utilisateur. Le message une fois envoyé sera effacé (par le timeout) de la table Messages, mais restera dans la table Chat.
 
 TODO
 ---------------------
