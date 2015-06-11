@@ -52,9 +52,12 @@ public class SendMessage extends Activity {
 
     public void sendButton(View view) {
         byte[] text = getEncryptedMessage(mEdit.getText().toString());
-        Message message = new Message(text, myPk, destPk);
+        Message messageEncr = new Message(text, myPk, destPk);
+        Message messageCl = new Message(mEdit.getText().toString().getBytes(), myPk, destPk);
 
-        sqLiteHelper.addMessage(message);
+
+        sqLiteHelper.addMessage(messageEncr);
+        sqLiteHelper.addMessageToChat(messageCl);
         Toast.makeText(SendMessage.this, "Message sent", Toast.LENGTH_SHORT).show();
         finish();
 

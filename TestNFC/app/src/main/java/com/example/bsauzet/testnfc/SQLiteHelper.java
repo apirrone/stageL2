@@ -30,7 +30,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_USERS_PUBLICKEY = "publicKey";
     private static final String KEY_USERS_NAME = "name";
 
-
     private static final String TABLE_MESSAGES = "messages";
     private static final String KEY_MESSAGES_ID = "id";
     private static final String KEY_MESSAGES_UUID = "uuid";
@@ -40,8 +39,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_MESSAGES_TIMEOUT ="timeout";
     private static final String KEY_MESSAGES_SENT = "sent";
 
+    private static final String TABLE_CHAT = "chat";
+    private static final String KEY_CHAT_ID = "id";
+    private static final String KEY_CHAT_UUID = "uuid";
+    private static final String KEY_CHAT_IDSOURCE = "idSource";
+    private static final String KEY_CHAT_IDDEST = "idDest";
+    private static final String KEY_CHAT_CONTENT = "content";
+
     private static final String[] COLUMNS_USERS = {KEY_USERS_ID, KEY_USERS_PUBLICKEY, KEY_USERS_NAME};
     private static final String[] COLUMNS_MESSAGES = {KEY_MESSAGES_ID, KEY_MESSAGES_UUID, KEY_MESSAGES_CONTENT, KEY_MESSAGES_IDSOURCE, KEY_MESSAGES_IDDEST, KEY_MESSAGES_TIMEOUT, KEY_MESSAGES_SENT};
+    private static final String[] COLUMNS_CHAT = {KEY_CHAT_ID, KEY_CHAT_UUID, KEY_CHAT_CONTENT, KEY_CHAT_IDSOURCE, KEY_CHAT_IDDEST};
 
 
     public SQLiteHelper(Context context){
@@ -65,8 +72,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "timeout REAL, " +
                 "sent INTEGER )";
 
+        String CREATE_CHAT_TABLE = "CREATE TABLE chat ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "uuid TEXT, " +
+                "content BLOB, " +
+                "idSource TEXT, " +
+                "idDest TEXT) " ;
+
         db.execSQL(CREATE_USERS_TABLE);
         db.execSQL(CREATE_MESSAGES_TABLE);
+        db.execSQL(CREATE_CHAT_TABLE);
     }
 
     public int numberOfUsers(){
@@ -254,6 +269,34 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     }
 
+
+    public List<Message> getMessagesConcerningUser(String pbk){
+
+        String myPbk = KeysHelper.getMyPublicKey();
+
+        List<Message> messages = new LinkedList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_MESSAGES,
+                COLUMNS_MESSAGES,
+                "idSource = ? OR (idDest = ? AND idSource = ? )",
+                new String[]{pbk, pbk, myPbk},
+                null,
+                null,
+                null,
+                null);
+
+
+        Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+        db.close();
+        return messages;
+    }
+
     public List<Message> getMessagesFromPublicKeySource(String pbk){
 
         List<Message> messages = new LinkedList<Message>();
@@ -353,10 +396,169 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.delete(TABLE_MESSAGES,
-                KEY_MESSAGES_UUID+" = ?",
-                new String[] {String.valueOf(message.getUuid())});
+                KEY_MESSAGES_UUID + " = ?",
+                new String[]{String.valueOf(message.getUuid())});
 
         db.close();
+    }
+
+    public void addMessageToChat(Message message){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CHAT_UUID, message.getUuid());
+        values.put(KEY_CHAT_IDSOURCE, message.getPublicKeySource());
+        values.put(KEY_CHAT_IDDEST, message.getPublicKeyDest());
+        values.put(KEY_CHAT_CONTENT, message.getContent());
+        db.insert(TABLE_CHAT, null, values);
+
+        db.close();
+    }
+
+    public Message getMessageChat(String uuid){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor =
+                db.query(TABLE_CHAT,
+                        COLUMNS_CHAT,
+                        "uuid = ?",
+                        new String[] {uuid},
+                        null,
+                        null,
+                        null,
+                        null);
+
+        if(cursor != null)
+            cursor.moveToFirst();
+
+        Message message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+        db.close();
+        return message;
+    }
+
+    public List<Message> getMessagesChatFromPublicKeyDest(String pbk){
+
+        List<Message> messages = new LinkedList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CHAT,
+                COLUMNS_CHAT,
+                "idDest = ?",
+                new String[]{pbk},
+                null,
+                null,
+                null,
+                null);
+
+
+        Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+        db.close();
+        return messages;
+    }
+
+    public List<Message> getMessagesChatFromContentAndSender(String content, String sender){
+        List<Message> messages = new LinkedList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String userPk = getUserByName(sender).getPublicKey();
+
+        Cursor cursor = db.query(TABLE_CHAT,
+                COLUMNS_CHAT,
+                "idSource = ? OR idSource = ? ",
+                new String[]{userPk, KeysHelper.getMyPublicKey()},
+                null,
+                null,
+                null,
+                null);
+
+
+        Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+        List<Message> messagesToReturn = new LinkedList<Message>();
+        for(int i = 0 ; i < messages.size() ; i++) {
+            String content1 = null;
+            content1 = new String(messages.get(i).getContent());
+
+            if (content1.equals(content))
+                messagesToReturn.add(messages.get(i));
+        }
+
+
+
+        db.close();
+        return messagesToReturn;
+    }
+
+    public List<Message> getMessagesChatConcerningUser(String pbk){
+
+        String myPbk = KeysHelper.getMyPublicKey();
+
+        List<Message> messages = new LinkedList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CHAT,
+                COLUMNS_CHAT,
+                "idSource = ? OR (idDest = ? AND idSource = ? )",
+                new String[]{pbk, pbk, myPbk},
+                null,
+                null,
+                null,
+                null);
+
+
+        Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+        db.close();
+        return messages;
+    }
+
+    public void deleteMessageChat(Message message){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(TABLE_CHAT,
+                KEY_CHAT_UUID + " = ?",
+                new String[]{String.valueOf(message.getUuid())});
+
+        db.close();
+    }
+
+    public List<Message> getMessagesChatFromPublicKeyDestAndSource(String pbk){
+
+        List<Message> messages = new LinkedList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CHAT,
+                COLUMNS_CHAT,
+                "idDest = ? OR idSource = ?",
+                new String[]{pbk, pbk},
+                null,
+                null,
+                null,
+                null);
+
+
+        Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+        db.close();
+        return messages;
     }
 
     @Override

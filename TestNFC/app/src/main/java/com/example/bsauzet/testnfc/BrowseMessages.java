@@ -30,6 +30,8 @@ public class BrowseMessages extends Activity {
     String userPk;
     String itemToDelete;
 
+    String myPublicKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,8 @@ public class BrowseMessages extends Activity {
         lv = (ListView)findViewById(R.id.listView);
         sqLiteHelper = new SQLiteHelper(this);
 
+        myPublicKey = KeysHelper.getMyPublicKey();
+
         updateView();
 
         lv.setLongClickable(true);
@@ -59,10 +63,10 @@ public class BrowseMessages extends Activity {
                         .setTitle("Delete message")
                         .setMessage("Are you sure you want to delete this message?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            List<Message> messagesToDelete = sqLiteHelper.getMessagesFromContentAndSender(itemToDelete, userName);
+                            List<Message> messagesToDelete = sqLiteHelper.getMessagesChatFromContentAndSender(itemToDelete, userName );
                             public void onClick(DialogInterface dialog, int which) {
                                 for(int i = 0 ; i < messagesToDelete.size() ; i++)
-                                    sqLiteHelper.deleteMessage(messagesToDelete.get(i));
+                                    sqLiteHelper.deleteMessageChat(messagesToDelete.get(i));
 
                                 updateView();
                             }
@@ -82,19 +86,20 @@ public class BrowseMessages extends Activity {
     }
 
     public void updateView(){
-        final List<Message> messages = sqLiteHelper.getMessagesFromPublicKeySource(userPk);
+        final List<Message> messages = sqLiteHelper.getMessagesChatConcerningUser(userPk);
 
         if(messages != null) {
             ArrayList<String> temp = new ArrayList<String>();
 
             for (int i = 0; i < messages.size(); i++) {
                 //MESSAGE FOR ME
-                if (messages.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) {
-                    try {
-                        temp.add(CryptoHelper.RSADecrypt(messages.get(i).getContent(), KeysHelper.getMyPrivateKey()));
-                    } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchProviderException | InvalidKeyException e) {
-                        e.printStackTrace();
-                    }
+                if (messages.get(i).getPublicKeyDest().equals(myPublicKey)){
+                    temp.add(new String(messages.get(i).getContent()));
+                }
+                //MESSAGE BY ME
+                if (messages.get(i).getPublicKeySource().equals(myPublicKey)) {
+                    String m = new String(messages.get(i).getContent());
+                        temp.add(m);
                 }
             }
 

@@ -52,10 +52,9 @@ public class MainActivity extends Activity{
 
         List<Message> messages = sqLiteHelper.getAllMessages();
         for (int i = 0 ; i < messages.size(); i++)
-            if(!messages.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey()))//Si le message n'est pas pour nous
-                if(messages.get(i).getSent())//S'il a déjà été envoyé au moins une fois
-                    if(now - messages.get(i).getTimeout() > Global.INITIAL_TIMEOUT)//Si son timeout est écoulé
-                        sqLiteHelper.deleteMessage(messages.get(i));               //Suppression du message
+            if(messages.get(i).getSent())//S'il a déjà été envoyé au moins une fois
+                if(now - messages.get(i).getTimeout() > Global.INITIAL_TIMEOUT)//Si son timeout est écoulé
+                    sqLiteHelper.deleteMessage(messages.get(i));               //Suppression du message
 
 
 
@@ -144,7 +143,13 @@ public class MainActivity extends Activity{
                 }
             }
             if(newMess) {
-                sqLiteHelper.addMessage(mess.get(i));
+                if(mess.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) {//MESSAGE FOR ME
+
+                    Message m = new Message(mess.get(i).getUuid(), CryptoHelper.RSADecryptByte(mess.get(i).getContent(), KeysHelper.getMyPrivateKey()), mess.get(i).getPublicKeySource(), mess.get(i).getPublicKeyDest());
+                    sqLiteHelper.addMessageToChat(m);
+                }
+                else
+                    sqLiteHelper.addMessage(mess.get(i));
             }
         }
     }

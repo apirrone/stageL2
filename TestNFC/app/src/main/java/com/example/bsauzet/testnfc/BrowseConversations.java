@@ -28,7 +28,7 @@ public class BrowseConversations extends Activity {
         sqLiteHelper = new SQLiteHelper(this);
 
         //Je récupere tous les messages qui me concernent
-        List<Message> messages = sqLiteHelper.getMessagesFromPublicKeyDest(KeysHelper.getMyPublicKey());
+        List<Message> messages = sqLiteHelper.getMessagesChatFromPublicKeyDestAndSource(KeysHelper.getMyPublicKey());
 
         for(int i = 0 ; i < messages.size() ; i++)
             if(!userExists(messages.get(i).getPublicKeySource())){

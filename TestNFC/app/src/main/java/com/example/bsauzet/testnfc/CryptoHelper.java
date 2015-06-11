@@ -58,6 +58,22 @@ public class CryptoHelper {
         return res;
     }
 
+    public static byte[] RSADecryptByte(final byte[] encBarr, PrivateKey privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, NoSuchProviderException {
+        String res = null;
+
+        Cipher cipher1 = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
+        cipher1.init(Cipher.DECRYPT_MODE, privateKey);
+
+        byte[] decBarr = new byte[0];
+        try {
+            decBarr = cipher1.doFinal(encBarr);
+        } catch (BadPaddingException e) {
+            Log.i("myApp", "BadPadding");
+            e.printStackTrace();
+        }
+        return decBarr;
+    }
+
 
 }
 
