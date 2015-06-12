@@ -36,8 +36,10 @@ public class BrowseConversations extends Activity {
 
 
                 if(messages.get(i).getPublicKeySource().equals(KeysHelper.getMyPublicKey())){
-                    User u = sqLiteHelper.getUserByPublicKey(messages.get(i).getPublicKeyDest());
-                    users.add(u);
+                    if(!localUserExists(messages.get(i).getPublicKeyDest())){
+                        User u = sqLiteHelper.getUserByPublicKey(messages.get(i).getPublicKeyDest());
+                        users.add(u);
+                    }
                 }
                 else if(temp != null)
                     users.add(temp);
@@ -97,7 +99,7 @@ public class BrowseConversations extends Activity {
         return u;
     }
 
-    public boolean localUserExists( String publicKey){
+    public boolean localUserExists(String publicKey){
         boolean exist = false;
         for(int i = 0 ; i < users.size() ; i++)
             if(users.get(i).getPublicKey().equals(publicKey)) {
