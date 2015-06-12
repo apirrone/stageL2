@@ -71,14 +71,15 @@ public class BrowseContacts extends Activity {
                         updateView();
                     }
                 })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setNeutralButton("Rename", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Rename", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         renameAlert();
+                    }
+
+                })
+                .setNeutralButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -88,7 +89,7 @@ public class BrowseContacts extends Activity {
 
     public boolean renameAlert(){
 
-        final EditText input = (EditText)findViewById(R.id.et);
+        final EditText input = new EditText(this);
         new AlertDialog.Builder(BrowseContacts.this)
                 .setTitle("Rename contact")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
