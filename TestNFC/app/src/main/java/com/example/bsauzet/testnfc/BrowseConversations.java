@@ -31,9 +31,15 @@ public class BrowseConversations extends Activity {
         List<Message> messages = sqLiteHelper.getMessagesChatFromPublicKeyDestAndSource(KeysHelper.getMyPublicKey());
 
         for(int i = 0 ; i < messages.size() ; i++)
-            if(!userExists(messages.get(i).getPublicKeySource())){
+            if(!localUserExists(messages.get(i).getPublicKeySource())){
                 User temp = sqLiteHelper.getUserByPublicKey(messages.get(i).getPublicKeySource());
-                if(temp != null)
+
+
+                if(messages.get(i).getPublicKeySource().equals(KeysHelper.getMyPublicKey())){
+                    User u = sqLiteHelper.getUserByPublicKey(messages.get(i).getPublicKeyDest());
+                    users.add(u);
+                }
+                else if(temp != null)
                     users.add(temp);
                 else {
                     User u = new User("Unknown(" + nextUnknownId() + ")", messages.get(i).getPublicKeySource());
@@ -91,7 +97,7 @@ public class BrowseConversations extends Activity {
         return u;
     }
 
-    public boolean userExists( String publicKey){
+    public boolean localUserExists( String publicKey){
         boolean exist = false;
         for(int i = 0 ; i < users.size() ; i++)
             if(users.get(i).getPublicKey().equals(publicKey)) {
