@@ -157,6 +157,7 @@ Pour pallier ce problème, nous avons décidé de rajouter une table dans notre 
 Lors de l'envoi d'un message, le message sera ajouté à la table Chat, puis chiffré, puis ajouté à la table Messages. 
 Ainsi, on conserve le transfert de messages chiffrés, tout en établissant une trace de la conversation que l'on a eue avec un utilisateur. Le message une fois envoyé sera effacé (par le timeout) de la table Messages, mais restera dans la table Chat.
 
+12/06 : Correction de bugs liés au changement structurel d'hier, ajout de la possibilité de renommer les contacts
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
@@ -168,10 +169,12 @@ Structurer les données pour la création des bases : deux tables :
 - Intégrer le cryptage des messages - OK
 - Faire en sorte que l'on puisse préparer l'envoi de messages, on ecrit un message qui sera envoyé lors de la prochaine communication - OK
 - Implémenter les feedback
-- Implémenter timeout des messages et feedbacks
-- Système de conversation (?)
+- Implémenter timeout des messages OK
+- Implémenter timeout des feedback 
+- Système de conversation presque OK
 - Suppression manuelle de messages OK
 - Suppression manuelle de contacts OK
+- Renommage des contacts OK
 
 
 
