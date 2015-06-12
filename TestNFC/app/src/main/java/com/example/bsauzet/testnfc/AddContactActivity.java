@@ -89,10 +89,16 @@ public class AddContactActivity extends Activity{
     public void addContactDataBase(String publicKey, String name){
         if(!sqLiteHelper.userExists(publicKey, name))
             sqLiteHelper.addUser(new User(name, publicKey));
-        else
-            Toast.makeText(AddContactActivity.this,
-                    "User already exists",
-                    Toast.LENGTH_LONG).show();
+        else {
+            User u = sqLiteHelper.getUserByPublicKey(publicKey);
+            if(u.getName().toLowerCase().contains("Unknown".toLowerCase())){
+                sqLiteHelper.updateUserName(u, name);
+            }
+            else
+                Toast.makeText(AddContactActivity.this,
+                        "User already exists",
+                        Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

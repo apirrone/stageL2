@@ -35,8 +35,11 @@ public class BrowseConversations extends Activity {
                 User temp = sqLiteHelper.getUserByPublicKey(messages.get(i).getPublicKeySource());
                 if(temp != null)
                     users.add(temp);
-                else
-                    users.add(new User("Unknown("+nextUnknownId()+")", messages.get(i).getPublicKeySource()));
+                else {
+                    User u = new User("Unknown(" + nextUnknownId() + ")", messages.get(i).getPublicKeySource());
+                    users.add(u);
+                    sqLiteHelper.addUser(u);
+                }
             }
 
 
@@ -49,7 +52,7 @@ public class BrowseConversations extends Activity {
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {;
+            public void onItemClick(AdapterView<?> parent,  View view, int position, long id) {;
                 String itemValue = (String) lv.getItemAtPosition(position);
                 goToBrowseMessagesActivity(itemValue);
             }

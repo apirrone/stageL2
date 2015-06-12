@@ -165,6 +165,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return users;
     }
 
+    public void updateUserName(User u, String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_USERS_NAME, name);
+        db.update(TABLE_USERS, values, KEY_USERS_NAME + "=?", new String[]{u.getName()});
+        db.close();
+    }
+
     public void deleteUser(User user){
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -551,6 +559,26 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 
         Message message = null;
+        if(cursor.moveToFirst())
+            do{
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                messages.add(message);
+            }while(cursor.moveToNext());
+
+        db.close();
+        return messages;
+    }
+
+    public List<Message> getAllMessagesChat(){
+        List<Message> messages = new LinkedList<Message>();
+
+        String query = "SELECT * FROM " + TABLE_CHAT;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        Message message = null;
+
         if(cursor.moveToFirst())
             do{
                 message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));

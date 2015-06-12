@@ -52,9 +52,11 @@ public class MainActivity extends Activity{
 
         List<Message> messages = sqLiteHelper.getAllMessages();
         for (int i = 0 ; i < messages.size(); i++)
-            if(messages.get(i).getSent())//S'il a déjà été envoyé au moins une fois
-                if(now - messages.get(i).getTimeout() > Global.INITIAL_TIMEOUT)//Si son timeout est écoulé
-                    sqLiteHelper.deleteMessage(messages.get(i));               //Suppression du message
+            if(messages.get(i).getSent()) {//S'il a déjà été envoyé au moins une fois
+                Log.i("Tamere", "timeout : "+(now - messages.get(i).getTimeout()));
+                if (now - messages.get(i).getTimeout() > Global.INITIAL_TIMEOUT)//Si son timeout est écoulé
+                    sqLiteHelper.deleteMessage(messages.get(i));//Suppression du message
+            }
 
 
 
@@ -182,7 +184,7 @@ public class MainActivity extends Activity{
 
     public NdefMessage createNdefMessageAllMessages(){
 
-        List<Message> messages = sqLiteHelper.getAllMessagesButMines();
+        List<Message> messages = sqLiteHelper.getAllMessages();
         if(!messages.isEmpty()) {
             String nbMessages = String.valueOf(messages.size());
 
@@ -198,6 +200,8 @@ public class MainActivity extends Activity{
             for (int i = 0; i < messages.size(); i++) {
                 if(messages.get(i).getSent() == false)
                     sqLiteHelper.updateSent(messages.get(i));
+
+                Log.i("Tamere" , "sent : "+messages.get(i).getSent());
 
                 ndefRecords[j] = new NdefRecord(
                         NdefRecord.TNF_MIME_MEDIA,
@@ -235,5 +239,22 @@ public class MainActivity extends Activity{
 
     public void viewMessagesButton(View view) {
         startActivity(new Intent(this, BrowseConversations.class));
+    }
+
+    public void debuglog(View view) {
+        List<Message> convMessages = sqLiteHelper.getAllMessagesChat();
+        List<Message> transitMessages = sqLiteHelper.getAllMessages();
+        Log.i("DATABASE", "id --- content --- sent --- timeout ");
+        for(int i = 0 ; i < convMessages.size() ; i++){
+            double now = (double)System.currentTimeMillis()/1000.0;
+            Message m = convMessages.get(i);
+            Log.i("DATABASE conv", ""+m.getUuid()+" --- "+m.getContent()+" --- "+m.getSent()+" --- "+(now - m.getTimeout()));
+        }
+        for(int i = 0 ; i < transitMessages.size() ; i++){
+            double now = (double)System.currentTimeMillis()/1000.0;
+            Message m = transitMessages.get(i);
+            Log.i("DATABASE trans", ""+m.getUuid()+" --- "+m.getContent()+" --- "+m.getSent()+" --- "+(now - m.getTimeout()));
+        }
+
     }
 }

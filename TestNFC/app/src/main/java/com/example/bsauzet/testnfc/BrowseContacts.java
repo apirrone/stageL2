@@ -2,13 +2,16 @@ package com.example.bsauzet.testnfc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -17,7 +20,7 @@ public class BrowseContacts extends Activity {
 
     ListView lv;
     SQLiteHelper sqLiteHelper;
-    String itemToDelete;
+    String itemToEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,31 +49,67 @@ public class BrowseContacts extends Activity {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                itemToDelete = (String) lv.getItemAtPosition(position);
-
-                new AlertDialog.Builder(BrowseContacts.this)
-                        .setTitle("Delete contact")
-                        .setMessage("Are you sure you want to delete this contact?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            User u = sqLiteHelper.getUserByName(itemToDelete);
-
-                            public void onClick(DialogInterface dialog, int which) {
-                                sqLiteHelper.deleteUser(u);
-
-                                updateView();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // do nothing
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-                return true;
+                return longClickAlert(position);
             }
         });
 
+    }
+
+    public boolean longClickAlert(int position){
+        itemToEdit = (String) lv.getItemAtPosition(position);
+
+
+        new AlertDialog.Builder(BrowseContacts.this)
+                .setTitle("Edit Contact")
+                .setMessage("What do yo want to do with this contact?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    User u = sqLiteHelper.getUserByName(itemToEdit);
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        sqLiteHelper.deleteUser(u);
+
+                        updateView();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setNeutralButton("Rename", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        renameAlert();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+        return true;
+    }
+
+    public boolean renameAlert(){
+
+        final EditText input = (EditText)findViewById(R.id.et);
+        new AlertDialog.Builder(BrowseContacts.this)
+                .setTitle("Rename contact")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    User u = sqLiteHelper.getUserByName(itemToEdit);
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        sqLiteHelper.updateUserName(u, input.getText().toString());
+
+                        updateView();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setView(input)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+
+                .show();
+        return true;
     }
 
     public void updateView(){
