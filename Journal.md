@@ -178,6 +178,7 @@ Structurer les données pour la création des bases : deux tables :
 - Suppression manuelle de contacts OK
 - Renommage des contacts OK
 - Distinguer les messages reçus des messages envoyés
+- Ajout de contact depuis n'importe quelle activité pour l'envoyeur
 
 
 Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer), invokebeam.
