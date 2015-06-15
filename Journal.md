@@ -170,7 +170,6 @@ Structurer les données pour la création des bases : deux tables :
 - n'afficher dans la liste de messages que les messages que l'on envoie et qu'on a recu qui sont pour nous
 - Intégrer le cryptage des messages - OK
 - Faire en sorte que l'on puisse préparer l'envoi de messages, on ecrit un message qui sera envoyé lors de la prochaine communication - OK
-- Implémenter les feedback
 - Implémenter timeout des messages OK
 - Implémenter timeout des feedback 
 - Système de conversation presque OK
@@ -178,7 +177,10 @@ Structurer les données pour la création des bases : deux tables :
 - Suppression manuelle de contacts OK
 - Renommage des contacts OK
 - Distinguer les messages reçus des messages envoyés
-- Ajout de contact depuis n'importe quelle activité pour l'envoyeur
+- Ajout de contact depuis n'importe quelle activité pour l'envoyeur (?) -> Peut être lourd lorsque l'envoyeur se trouve sur l'activité de synchronisation des messages, tous les messages seront envoyés avec les données du contact. De même, lorsque l'on veut juste synchroniser les messages, les données de l'envoyeur seront envoyées. 
+- Implémenter les feedback
+- Refonte graphique 
+- Documentation (utilisation + doc technique)
 
 
 Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer), invokebeam.
