@@ -327,9 +327,7 @@ public class MainActivity extends Activity{
             return null;
     }
 
-    public void viewMessagesButton(View view) {
-        startActivity(new Intent(this, BrowseConversations.class));
-    }
+
 
     public void debuglog(View view) {
         List<Message> convMessages = sqLiteHelper.getAllMessagesChat();

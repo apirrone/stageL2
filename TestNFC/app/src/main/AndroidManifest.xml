@@ -49,10 +49,6 @@
             android:name=".BrowseMessages"
             android:label="@string/title_activity_browse_messages" >
         </activity>
-        <activity
-            android:name=".BrowseConversations"
-            android:label="@string/title_activity_browse_conversations" >
-        </activity>
     </application>
 
 </manifest>
