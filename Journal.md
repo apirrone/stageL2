@@ -160,6 +160,8 @@ Ainsi, on conserve le transfert de messages chiffrés, tout en établissant une 
 12/06 : Correction de bugs liés au changement structurel d'hier, ajout de la possibilité de renommer les contacts.
 Les conversations sont "nommées" en fonction de la personne avec qui on discute.
 
+
+17/06 : On s'est débattus avec git une partie de la matinée, on revient a quelque chose de stable
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
