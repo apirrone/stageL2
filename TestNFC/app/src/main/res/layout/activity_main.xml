@@ -27,8 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton3"
-        android:src="@mipmap/addcibtact"
-        android:background="#51e3e3e3"
+        android:background="@drawable/addcontactbutton"
         android:onClick="goToAddContact"
         android:layout_alignParentBottom="true"
         android:layout_toStartOf="@+id/textView5" />
@@ -37,9 +36,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton4"
-        android:src="@mipmap/addmessage"
         android:onClick="browseContactsButton"
-        android:background="#51e3e3e3"
+        android:background="@drawable/newmessagebutton"
         android:layout_below="@+id/listViewConversation"
         android:layout_toEndOf="@+id/textView5" />
 
