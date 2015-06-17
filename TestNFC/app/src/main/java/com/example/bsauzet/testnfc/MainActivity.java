@@ -82,7 +82,6 @@ public class MainActivity extends Activity{
         checkAndProcessBeamIntent(intent);
 
     }
-
     public void updateView(){
         //fetch all messages concerning me
         List<Message> messages = sqLiteHelper.getMessagesChatFromPublicKeyDestAndSource(KeysHelper.getMyPublicKey());
@@ -203,7 +202,9 @@ public class MainActivity extends Activity{
                 j++;
                 String dest = new String(inNdefRecords[j].getPayload());
                 j++;
-                incMessages.add(new Message(uuid, message, source, dest));
+                double date = Double.parseDouble(new String(inNdefRecords[j].getPayload()));
+                j++;
+                incMessages.add(new Message(uuid, message, source, dest, date));
             }
 
             try {
@@ -230,7 +231,7 @@ public class MainActivity extends Activity{
                 //If the message is for me
                 if(mess.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) {
                     //Add the message to the chat database table
-                    Message m = new Message(mess.get(i).getUuid(), CryptoHelper.RSADecryptByte(mess.get(i).getContent(), KeysHelper.getMyPrivateKey()), mess.get(i).getPublicKeySource(), mess.get(i).getPublicKeyDest());
+                    Message m = new Message(mess.get(i).getUuid(), CryptoHelper.RSADecryptByte(mess.get(i).getContent(), KeysHelper.getMyPrivateKey()), mess.get(i).getPublicKeySource(), mess.get(i).getPublicKeyDest(), mess.get(i).getDate());
                     sqLiteHelper.addMessageToChat(m);
                 }
                 else
@@ -271,7 +272,7 @@ public class MainActivity extends Activity{
         if(!messages.isEmpty()) {
             String nbMessages = String.valueOf(messages.size());
 
-            NdefRecord[] ndefRecords = new NdefRecord[(messages.size() * 4) + 1];
+            NdefRecord[] ndefRecords = new NdefRecord[(messages.size() * 5) + 1];
 
             ndefRecords[0] = new NdefRecord(
                     NdefRecord.TNF_MIME_MEDIA,
@@ -284,7 +285,6 @@ public class MainActivity extends Activity{
                 if(messages.get(i).getSent() == false)
                     sqLiteHelper.updateSent(messages.get(i));
 
-                Log.i("Tamere" , "sent : "+messages.get(i).getSent());
 
                 ndefRecords[j] = new NdefRecord(
                         NdefRecord.TNF_MIME_MEDIA,
@@ -309,6 +309,12 @@ public class MainActivity extends Activity{
                         "text/plain".getBytes(),
                         new byte[]{},
                         messages.get(i).getPublicKeyDest().getBytes());
+                j++;
+                ndefRecords[j] = new NdefRecord(
+                        NdefRecord.TNF_MIME_MEDIA,
+                        "text/plain".getBytes(),
+                        new byte[]{},
+                        String.valueOf(messages.get(i).getDate()).getBytes());
                 j++;
             }
 

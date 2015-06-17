@@ -13,6 +13,7 @@ public class Message {
     private byte[] content;
     private double timeout;
     private boolean sent;
+    private double date;
 
     public Message(byte[] content, String publicKeySource, String publicKeyDest) {
         this.uuid = UUID.randomUUID().toString();
@@ -21,24 +22,27 @@ public class Message {
         this.content = content;
         this.timeout = (double)System.currentTimeMillis()/1000.0;
         this.sent = false;
+        this.date = (double)System.currentTimeMillis()/1000.0;
 
     }
-    public Message(String uuid, byte[] content, String publicKeySource, String publicKeyDest, double timeout, boolean sent) {
+    public Message(String uuid, byte[] content, String publicKeySource, String publicKeyDest, double timeout, boolean sent, double date) {
         this.uuid = uuid;
         this.publicKeySource = publicKeySource;
         this.publicKeyDest = publicKeyDest;
         this.content = content;
         this.timeout = timeout;
         this.sent = sent;
+        this.date = date;
     }
 
-    public Message(String uuid, byte[] content, String publicKeySource, String publicKeyDest) {
+    public Message(String uuid, byte[] content, String publicKeySource, String publicKeyDest, double date) {
         this.uuid = uuid;
         this.publicKeySource = publicKeySource;
         this.publicKeyDest = publicKeyDest;
         this.content = content;
         this.timeout = (double)System.currentTimeMillis()/1000.0;
         this.sent = false;
+        this.date = date;
     }
 
     public String getUuid() {
@@ -80,5 +84,9 @@ public class Message {
 
     public boolean getSent() {
         return sent;
+    }
+
+    public double getDate(){
+        return date;
     }
 }

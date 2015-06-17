@@ -1,22 +1,13 @@
 package com.example.bsauzet.testnfc;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +16,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
@@ -44,8 +34,9 @@ public class BrowseMessages extends Activity {
 
     String myPublicKey;
 
-
     EditText mEdit;
+
+    private DiscussArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,61 +96,22 @@ public class BrowseMessages extends Activity {
     public void updateView(){
         final List<Message> messages = sqLiteHelper.getMessagesChatConcerningUser(userPk);
 
-        if(messages != null) {
-            ArrayList<Message> temp = new ArrayList<Message>();
+        adapter = new DiscussArrayAdapter(getApplicationContext(), R.layout.listitem_discuss);
+        lv.setAdapter(adapter);
 
+        if(messages != null) {
             for (int i = 0; i < messages.size(); i++) {
                 //MESSAGE FOR ME
                 if (messages.get(i).getPublicKeyDest().equals(myPublicKey)){
-                    temp.add(messages.get(i));
+                    adapter.add(new OneComment(true, new String(messages.get(i).getContent())));
                 }
                 //MESSAGE BY ME
                 if (messages.get(i).getPublicKeySource().equals(myPublicKey)) {
-                    Message m = messages.get(i);
-                        temp.add(m);
+                    adapter.add(new OneComment(false, new String(messages.get(i).getContent())));
                 }
             }
-
-            if(temp.size()>0){
-                String[] lv_arr = new String[temp.size()];
-                for(int i = 0 ; i < temp.size() ; i++)
-                    lv_arr[i] = new String(temp.get(i).getContent());
-                lv.setAdapter(new ArrayAdapter<String>(BrowseMessages.this, android.R.layout.simple_list_item_1, lv_arr));
-            }
-//            Log.i("TAMERE", "temp.size() : " + temp.size() + " --- lv.size : " + (lv.getFirstVisiblePosition()));
-//            for(int i = 0 ; i < lv.getLastVisiblePosition() - lv.getFirstVisiblePosition() ; i++){
-//                if(temp.get(i).getPublicKeySource().equals(myPublicKey)) {
-//                    lv.getChildAt(i).setBackgroundColor(0xAA5F82A6);
-//                }
-//            }
-
         }
     }
-
-//    @Override
-//    public View getView(int position, View convertView, ViewGroup parent) {
-//        View rowView;
-//
-//        if(convertView == null){
-//            LayoutInflater inflator = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            rowView = inflator.inflate(R.layout.mylistview, null);
-//
-//        } else {
-//            rowView = (View) convertView;
-//        }
-//
-//        TextView myTv = (TextView) rowView.findViewById(R.id.tvCode);
-//
-//        LinearLayout ActiveItem = (LinearLayout) rowView;
-//        if(position == selectedItem)
-//            ActiveItem.setBackgroundColor(Color.red(255));
-//
-//
-//    }
-//
-//    public void setSelectedItem(int position) {
-//        selectedItem = position;
-//    }
 
     @Override
     public void onPause() {
@@ -186,5 +138,24 @@ public class BrowseMessages extends Activity {
         sqLiteHelper.addMessageToChat(messageCl);
         Toast.makeText(BrowseMessages.this, "Message sent", Toast.LENGTH_SHORT).show();
         updateView();
+        mEdit.setText("");
+        lv.setSelection(adapter.getCount() -1);
     }
+//
+//    public void sortMessagesByDate(List<Message> m){
+//        boolean sorted=true;
+//        int temp;
+//
+//        while (sorted){
+//            sorted = false;
+//            for (int i=0; i < x.length-1; i++)
+//                if (x[i] > x[i+1]) {
+//                    temp       = x[i];
+//                    x[i]       = x[i+1];
+//                    x[i+1]     = temp;
+//                    sorted = true;
+//                }
+//        }
+//
+//    }
 }

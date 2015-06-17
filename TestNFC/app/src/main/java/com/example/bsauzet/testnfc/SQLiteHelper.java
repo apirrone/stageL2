@@ -38,6 +38,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_MESSAGES_CONTENT = "content";
     private static final String KEY_MESSAGES_TIMEOUT ="timeout";
     private static final String KEY_MESSAGES_SENT = "sent";
+    private static final String KEY_MESSAGES_DATE = "date";
+
 
     private static final String TABLE_CHAT = "chat";
     private static final String KEY_CHAT_ID = "id";
@@ -45,10 +47,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_CHAT_IDSOURCE = "idSource";
     private static final String KEY_CHAT_IDDEST = "idDest";
     private static final String KEY_CHAT_CONTENT = "content";
+    private static final String KEY_CHAT_DATE = "date";
 
     private static final String[] COLUMNS_USERS = {KEY_USERS_ID, KEY_USERS_PUBLICKEY, KEY_USERS_NAME};
-    private static final String[] COLUMNS_MESSAGES = {KEY_MESSAGES_ID, KEY_MESSAGES_UUID, KEY_MESSAGES_CONTENT, KEY_MESSAGES_IDSOURCE, KEY_MESSAGES_IDDEST, KEY_MESSAGES_TIMEOUT, KEY_MESSAGES_SENT};
-    private static final String[] COLUMNS_CHAT = {KEY_CHAT_ID, KEY_CHAT_UUID, KEY_CHAT_CONTENT, KEY_CHAT_IDSOURCE, KEY_CHAT_IDDEST};
+    private static final String[] COLUMNS_MESSAGES = {KEY_MESSAGES_ID, KEY_MESSAGES_UUID, KEY_MESSAGES_CONTENT, KEY_MESSAGES_IDSOURCE, KEY_MESSAGES_IDDEST, KEY_MESSAGES_TIMEOUT, KEY_MESSAGES_SENT, KEY_MESSAGES_DATE};
+    private static final String[] COLUMNS_CHAT = {KEY_CHAT_ID, KEY_CHAT_UUID, KEY_CHAT_CONTENT, KEY_CHAT_IDSOURCE, KEY_CHAT_IDDEST, KEY_CHAT_DATE};
 
 
     public SQLiteHelper(Context context){
@@ -70,14 +73,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "idSource TEXT, " +
                 "idDest TEXT, " +
                 "timeout REAL, " +
-                "sent INTEGER )";
+                "sent INTEGER, " +
+                "date REAL)";
 
         String CREATE_CHAT_TABLE = "CREATE TABLE chat ( " +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "uuid TEXT, " +
                 "content BLOB, " +
                 "idSource TEXT, " +
-                "idDest TEXT) " ;
+                "idDest TEXT, " +
+                "date REAL) " ;
 
         db.execSQL(CREATE_USERS_TABLE);
         db.execSQL(CREATE_MESSAGES_TABLE);
@@ -201,6 +206,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_MESSAGES_CONTENT, message.getContent());
         values.put(KEY_MESSAGES_TIMEOUT, message.getTimeout());
         values.put(KEY_MESSAGES_SENT, (message.getSent() ? 1 : 0));
+        values.put(KEY_MESSAGES_DATE, message.getDate());
         db.insert(TABLE_MESSAGES, null, values);
 
         db.close();
@@ -222,7 +228,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         if(cursor != null)
             cursor.moveToFirst();
 
-        Message message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+        Message message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
         db.close();
         return message;
     }
@@ -244,7 +250,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
                 messages.add(message);
             }while(cursor.moveToNext());
 
@@ -267,7 +273,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
                 messages.add(message);
             }while(cursor.moveToNext());
 
@@ -297,7 +303,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
                 messages.add(message);
             }while(cursor.moveToNext());
 
@@ -322,7 +328,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
                 messages.add(message);
             }while(cursor.moveToNext());
 
@@ -342,7 +348,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
                 messages.add(message);
             }while(cursor.moveToNext());
 
@@ -369,7 +375,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
                 messages.add(message);
             }while(cursor.moveToNext());
 
@@ -418,56 +424,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_CHAT_IDSOURCE, message.getPublicKeySource());
         values.put(KEY_CHAT_IDDEST, message.getPublicKeyDest());
         values.put(KEY_CHAT_CONTENT, message.getContent());
+        values.put(KEY_CHAT_DATE, message.getDate());
         db.insert(TABLE_CHAT, null, values);
 
         db.close();
     }
 
-    public Message getMessageChat(String uuid){
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor =
-                db.query(TABLE_CHAT,
-                        COLUMNS_CHAT,
-                        "uuid = ?",
-                        new String[] {uuid},
-                        null,
-                        null,
-                        null,
-                        null);
-
-        if(cursor != null)
-            cursor.moveToFirst();
-
-        Message message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
-        db.close();
-        return message;
-    }
-
-    public List<Message> getMessagesChatFromPublicKeyDest(String pbk){
-
-        List<Message> messages = new LinkedList<Message>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_CHAT,
-                COLUMNS_CHAT,
-                "idDest = ?",
-                new String[]{pbk},
-                null,
-                null,
-                null,
-                null);
-
-
-        Message message = null;
-        if(cursor.moveToFirst())
-            do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
-                messages.add(message);
-            }while(cursor.moveToNext());
-
-        db.close();
-        return messages;
-    }
 
     public List<Message> getMessagesChatFromContentAndSender(String content, String sender){
         List<Message> messages = new LinkedList<Message>();
@@ -488,7 +450,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5));
                 messages.add(message);
             }while(cursor.moveToNext());
 
@@ -526,7 +488,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5));
                 messages.add(message);
             }while(cursor.moveToNext());
 
@@ -561,7 +523,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Message message = null;
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5));
                 messages.add(message);
             }while(cursor.moveToNext());
 
@@ -581,7 +543,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst())
             do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4));
+                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5));
                 messages.add(message);
             }while(cursor.moveToNext());
 
