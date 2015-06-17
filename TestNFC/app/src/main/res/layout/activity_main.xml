@@ -21,8 +21,7 @@
         android:text="Messages From"
         android:id="@+id/textView5"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:textStyle="bold" />
+        android:layout_centerHorizontal="true" />
 
     <ImageButton
         android:layout_width="wrap_content"

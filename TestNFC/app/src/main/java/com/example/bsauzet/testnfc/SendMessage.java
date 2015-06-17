@@ -20,9 +20,9 @@ import javax.crypto.NoSuchPaddingException;
 public class SendMessage extends Activity {
 
     private EditText mEdit;
-    String destName;
-    String destPk;
-    String myPk;
+    private String destName;
+    private String destPk;
+    private String myPk;
 
     SQLiteHelper sqLiteHelper;
 

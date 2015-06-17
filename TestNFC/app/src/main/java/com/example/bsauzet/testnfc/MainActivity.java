@@ -12,10 +12,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -27,14 +23,12 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 
+
 public class MainActivity extends Activity{
 
-    private EditText mEdit;
-    ListView lv;
     NfcAdapter nfcAdapter;
 
     SQLiteHelper sqLiteHelper;
-    ArrayList<User> users;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,28 +37,22 @@ public class MainActivity extends Activity{
 
         Intent intent = getIntent();
 
-        users = new ArrayList<User>();
-        lv = (ListView)findViewById(R.id.listViewConversation);
-
+        //Genreate public and private keys if they do not exist (first launch)
         if(KeysHelper.getMyPublicKey() == null)
             KeysHelper.generateKeys(getApplicationContext());
 
         sqLiteHelper = new SQLiteHelper(this);
 
-        mEdit = (EditText)findViewById(R.id.editText);
-
         nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 
         double now = (double)System.currentTimeMillis()/1000.0;
 
+        //Checking timeouts every time the application is started
         List<Message> messages = sqLiteHelper.getAllMessages();
         for (int i = 0 ; i < messages.size(); i++)
-            if(messages.get(i).getSent()) {//S'il a déjà été envoyé au moins une fois
-                Log.i("Tamere", "timeout : "+(now - messages.get(i).getTimeout()));
-                if (now - messages.get(i).getTimeout() > Global.INITIAL_TIMEOUT)//Si son timeout est écoulé
-                    sqLiteHelper.deleteMessage(messages.get(i));//Suppression du message
-            }
-
+            if(messages.get(i).getSent())//If the message has been sent once (at least)
+                if (now - messages.get(i).getTimeout() > Global.INITIAL_TIMEOUT)//If the timeout is over
+                    sqLiteHelper.deleteMessage(messages.get(i));//Deleting the message
 
 
         nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
@@ -75,100 +63,13 @@ public class MainActivity extends Activity{
             }
         }, this);
 
-
-        updateView();
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent,  View view, int position, long id) {;
-                String itemValue = (String) lv.getItemAtPosition(position);
-                goToBrowseMessagesActivity(itemValue);
-            }
-
-        });
-
         checkAndProcessBeamIntent(intent);
-
-    }
-
-    public void updateView(){
-        //Je récupere tous les messages qui me concernent
-        List<Message> messages = sqLiteHelper.getMessagesChatFromPublicKeyDestAndSource(KeysHelper.getMyPublicKey());
-
-        for(int i = 0 ; i < messages.size() ; i++)
-            if(!localUserExists(messages.get(i).getPublicKeySource())){
-                User temp = sqLiteHelper.getUserByPublicKey(messages.get(i).getPublicKeySource());
-
-
-                if(messages.get(i).getPublicKeySource().equals(KeysHelper.getMyPublicKey())){
-                    if(!localUserExists(messages.get(i).getPublicKeyDest())){
-                        User u = sqLiteHelper.getUserByPublicKey(messages.get(i).getPublicKeyDest());
-                        users.add(u);
-                    }
-                }
-                else if(temp != null)
-                    users.add(temp);
-                else {
-                    User u = new User("Unknown(" + nextUnknownId() + ")", messages.get(i).getPublicKeySource());
-                    users.add(u);
-                    sqLiteHelper.addUser(u);
-                }
-            }
-
-
-        String[] lv_arr = new String[users.size()];
-
-        for(int i = 0 ; i < users.size() ; i++)
-            lv_arr[i] = users.get(i).getName();
-
-        lv.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, lv_arr));
-    }
-
-    public int nextUnknownId(){
-        int cmp = 0;
-        for(int i = 0 ; i < users.size() ; i++)
-            if(users.get(i).getName().toLowerCase().contains("Unknown".toLowerCase()))
-                cmp++;
-
-        return cmp+1;
-    }
-
-    public void goToBrowseMessagesActivity(String name){
-        Intent intent = new Intent(this, BrowseMessages.class);
-        User u = getUserByName(name);
-
-        if(u != null) {
-            intent.putExtra("name", u.getName());
-            intent.putExtra("publicKey", u.getPublicKey());
-            intent.setAction("NewActivity");
-            startActivity(intent);
-        }
-    }
-
-    public User getUserByName(String name){
-        User u = null;
-        for(int i = 0 ; i < users.size() ; i++)
-            if(users.get(i).getName().equals(name)){
-                u = users.get(i);
-                break;
-            }
-        return u;
-    }
-
-    public boolean localUserExists(String publicKey){
-        boolean exist = false;
-        for(int i = 0 ; i < users.size() ; i++)
-            if(users.get(i).getPublicKey().equals(publicKey)) {
-                exist = true;
-                break;
-            }
-        return exist;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateView();
+
         Intent intent = getIntent();
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -183,7 +84,6 @@ public class MainActivity extends Activity{
         IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
     }
-
 
     private void checkAndProcessBeamIntent(Intent intent){
         String action = intent.getAction();
@@ -225,23 +125,25 @@ public class MainActivity extends Activity{
 
     public void addNotKnownMessages(ArrayList<Message> mess) throws IllegalBlockSizeException, InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException, NoSuchPaddingException {
         List<Message> myMessages = sqLiteHelper.getAllMessages();
-        myMessages.addAll(sqLiteHelper.getAllMessagesChat());
+
         for(int i = 0 ; i < mess.size() ; i++) {
             boolean newMess = true;
-            for (int j = 0; j < myMessages.size(); j++) {
+            for (int j = 0; j < myMessages.size(); j++)
                 if (mess.get(i).getUuid().equals(myMessages.get(j).getUuid())) {
                     newMess = false;
                     break;
                 }
-            }
-            if(newMess) {
-                if(mess.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) {//MESSAGE FOR ME
 
+            if(newMess) {
+                //If message for me
+                if(mess.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) {
+                    //Decrypt message
                     Message m = new Message(mess.get(i).getUuid(), CryptoHelper.RSADecryptByte(mess.get(i).getContent(), KeysHelper.getMyPrivateKey()), mess.get(i).getPublicKeySource(), mess.get(i).getPublicKeyDest());
+                    //Add it to the chat database table
                     sqLiteHelper.addMessageToChat(m);
                 }
                 else
-                    sqLiteHelper.addMessage(mess.get(i));
+                    sqLiteHelper.addMessage(mess.get(i));//Add it (crypted) to the messages table (we are an intermediate)
             }
         }
     }
@@ -263,7 +165,6 @@ public class MainActivity extends Activity{
         intent.setAction("NewActivity");
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
-
     }
 
     public void browseContactsButton(View view) {
@@ -272,9 +173,11 @@ public class MainActivity extends Activity{
         startActivity(intent);
     }
 
+    //Creates an NdefMessage containing all the messages we have to transfer (contained in the messages database table)
     public NdefMessage createNdefMessageAllMessages(){
 
         List<Message> messages = sqLiteHelper.getAllMessages();
+
         if(!messages.isEmpty()) {
             String nbMessages = String.valueOf(messages.size());
 
@@ -290,8 +193,6 @@ public class MainActivity extends Activity{
             for (int i = 0; i < messages.size(); i++) {
                 if(messages.get(i).getSent() == false)
                     sqLiteHelper.updateSent(messages.get(i));
-
-                Log.i("Tamere" , "sent : "+messages.get(i).getSent());
 
                 ndefRecords[j] = new NdefRecord(
                         NdefRecord.TNF_MIME_MEDIA,
@@ -319,25 +220,24 @@ public class MainActivity extends Activity{
                 j++;
             }
 
-            NdefMessage ndefMessageout = new NdefMessage(ndefRecords);
-
-            return ndefMessageout;
+            return new NdefMessage(ndefRecords);
         }
         else
             return null;
     }
 
-
-
+    //Displays the content of the database in Log
     public void debuglog(View view) {
         List<Message> convMessages = sqLiteHelper.getAllMessagesChat();
         List<Message> transitMessages = sqLiteHelper.getAllMessages();
         Log.i("DATABASE", "id --- content --- sent --- timeout ");
+
         for(int i = 0 ; i < convMessages.size() ; i++){
             double now = (double)System.currentTimeMillis()/1000.0;
             Message m = convMessages.get(i);
             Log.i("DATABASE conv", ""+m.getUuid()+" --- "+m.getContent()+" --- "+m.getSent()+" --- "+(now - m.getTimeout()));
         }
+
         for(int i = 0 ; i < transitMessages.size() ; i++){
             double now = (double)System.currentTimeMillis()/1000.0;
             Message m = transitMessages.get(i);

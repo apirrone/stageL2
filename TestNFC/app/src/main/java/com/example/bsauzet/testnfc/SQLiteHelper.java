@@ -84,12 +84,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_CHAT_TABLE);
     }
 
-    public int numberOfUsers(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        return (int)DatabaseUtils.queryNumEntries(db, "users");
-
-    }
-
     public void addUser(User user){
         SQLiteDatabase db = this.getWritableDatabase();
 

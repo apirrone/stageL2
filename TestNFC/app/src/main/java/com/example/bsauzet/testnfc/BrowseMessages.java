@@ -123,10 +123,12 @@ public class BrowseMessages extends Activity {
                     lv_arr[i] = new String(temp.get(i).getContent());
                 lv.setAdapter(new ArrayAdapter<String>(BrowseMessages.this, android.R.layout.simple_list_item_1, lv_arr));
             }
+
 //            Log.i("TAMERE", "temp.size() : " + temp.size() + " --- lv.size : " + (lv.getFirstVisiblePosition()));
-//            for(int i = 0 ; i < lv.getLastVisiblePosition() - lv.getFirstVisiblePosition() ; i++){
+//            for(int i = 0 ; i < temp.size() ; i++){
 //                if(temp.get(i).getPublicKeySource().equals(myPublicKey)) {
-//                    lv.getChildAt(i).setBackgroundColor(0xAA5F82A6);
+//
+//                    lv.getChildAt(i-lv.getFirstVisiblePosition()).setBackgroundColor(0xAA5F82A6);
 //                }
 //            }
 

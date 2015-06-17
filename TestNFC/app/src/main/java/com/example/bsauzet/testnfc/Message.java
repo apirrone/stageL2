@@ -14,6 +14,7 @@ public class Message {
     private double timeout;
     private boolean sent;
 
+    //Constructor that generates UUID, sets Timeout and set sent to false
     public Message(byte[] content, String publicKeySource, String publicKeyDest) {
         this.uuid = UUID.randomUUID().toString();
         this.publicKeySource = publicKeySource;
@@ -23,6 +24,8 @@ public class Message {
         this.sent = false;
 
     }
+
+    //Construtor that copies all parameters
     public Message(String uuid, byte[] content, String publicKeySource, String publicKeyDest, double timeout, boolean sent) {
         this.uuid = uuid;
         this.publicKeySource = publicKeySource;
@@ -32,6 +35,7 @@ public class Message {
         this.sent = sent;
     }
 
+    //Constructor that copies UUID but sets timeout and sent
     public Message(String uuid, byte[] content, String publicKeySource, String publicKeyDest) {
         this.uuid = uuid;
         this.publicKeySource = publicKeySource;
@@ -41,38 +45,23 @@ public class Message {
         this.sent = false;
     }
 
+
+    //GETTERS AND SETTERS
+
     public String getUuid() {
         return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public String getPublicKeySource() {
         return publicKeySource;
     }
 
-    public void setPublicKeySource(String publicKeySource) {
-        this.publicKeySource = publicKeySource;
-    }
-
     public String getPublicKeyDest() {
         return publicKeyDest;
     }
-
-    public void setPublicKeyDest(String publicKeyDest) {
-        this.publicKeyDest = publicKeyDest;
-    }
-
     public byte[] getContent() {
         return content;
     }
-
-    public void setContent(byte[] content) {
-        this.content = content;
-    }
-
 
     public double getTimeout() {
         return timeout;
