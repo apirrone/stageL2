@@ -89,4 +89,7 @@ public class Message {
     public double getDate(){
         return date;
     }
+    public void setDate(double date){
+        this.date = date;
+    }
 }

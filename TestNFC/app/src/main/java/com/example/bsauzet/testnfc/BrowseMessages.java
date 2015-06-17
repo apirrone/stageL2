@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -96,6 +97,8 @@ public class BrowseMessages extends Activity {
     public void updateView(){
         final List<Message> messages = sqLiteHelper.getMessagesChatConcerningUser(userPk);
 
+        sortMessagesByDate(messages);
+
         adapter = new DiscussArrayAdapter(getApplicationContext(), R.layout.listitem_discuss);
         lv.setAdapter(adapter);
 
@@ -141,21 +144,42 @@ public class BrowseMessages extends Activity {
         mEdit.setText("");
         lv.setSelection(adapter.getCount() -1);
     }
-//
-//    public void sortMessagesByDate(List<Message> m){
-//        boolean sorted=true;
-//        int temp;
-//
-//        while (sorted){
-//            sorted = false;
-//            for (int i=0; i < x.length-1; i++)
-//                if (x[i] > x[i+1]) {
-//                    temp       = x[i];
-//                    x[i]       = x[i+1];
-//                    x[i+1]     = temp;
-//                    sorted = true;
-//                }
-//        }
-//
-//    }
+
+    public void sortMessagesByDate(List<Message> m){
+        if(m.size()>0)
+            quickSort(0, m.size() -1, m);
+        for(int i = 0 ; i < m.size() ; i++)
+            Log.i("tamere", "date : "+m.get(i).getDate());
+    }
+
+    public void quickSort(int lowerIndex, int higherIndex, List<Message> m){
+
+        int i = lowerIndex;
+        int j = higherIndex;
+
+        double pivot = m.get(lowerIndex+(higherIndex-lowerIndex)/2).getDate();
+
+        while (i <= j) {
+            while (m.get(i).getDate() < pivot) {
+                i++;
+            }
+            while (m.get(j).getDate() > pivot) {
+                j--;
+            }
+            if (i <= j) {
+                exchangeMessages(i, j, m);
+                i++;
+                j--;
+            }
+        }
+        if (lowerIndex < j)
+            quickSort(lowerIndex, j, m);
+        if (i < higherIndex)
+            quickSort(i, higherIndex, m);
+    }
+    private void exchangeMessages(int i, int j, List<Message> m) {
+        double temp = m.get(i).getDate();
+        m.get(i).setDate(m.get(j).getDate());
+        m.get(j).setDate(temp);
+    }
 }

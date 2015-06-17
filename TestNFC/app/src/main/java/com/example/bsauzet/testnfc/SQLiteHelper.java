@@ -425,6 +425,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_CHAT_IDDEST, message.getPublicKeyDest());
         values.put(KEY_CHAT_CONTENT, message.getContent());
         values.put(KEY_CHAT_DATE, message.getDate());
+
         db.insert(TABLE_CHAT, null, values);
 
         db.close();
