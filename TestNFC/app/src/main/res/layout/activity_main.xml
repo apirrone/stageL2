@@ -21,14 +21,14 @@
         android:text="Messages From"
         android:id="@+id/textView5"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:textStyle="bold" />
+        android:layout_centerHorizontal="true" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton3"
-        android:background="@drawable/addcontactbutton"
+        android:src="@mipmap/addcibtact"
+        android:background="#51e3e3e3"
         android:onClick="goToAddContact"
         android:layout_alignParentBottom="true"
         android:layout_toStartOf="@+id/textView5" />
@@ -37,8 +37,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton4"
+        android:src="@mipmap/addmessage"
         android:onClick="browseContactsButton"
-        android:background="@drawable/newmessagebutton"
+        android:background="#51e3e3e3"
         android:layout_below="@+id/listViewConversation"
         android:layout_toEndOf="@+id/textView5" />
 
