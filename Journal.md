@@ -162,6 +162,9 @@ Les conversations sont "nommées" en fonction de la personne avec qui on discute
 
 
 17/06 : On s'est débattus avec git une partie de la matinée, on revient a quelque chose de stable
+Ajout d'un meilleur systeme de visualisation des conversations. Correction de bugs. Nettoyage du code. Début de tri des messages dans les conversations en fonction de leur dates d'envoi (ne fonctionne pas encore)
+
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
@@ -178,7 +181,7 @@ Structurer les données pour la création des bases : deux tables :
 - Suppression manuelle de messages OK
 - Suppression manuelle de contacts OK
 - Renommage des contacts OK
-- Distinguer les messages reçus des messages envoyés
+- Distinguer les messages reçus des messages envoyés OK
 - Ajout de contact depuis n'importe quelle activité pour l'envoyeur (?) -> Peut être lourd lorsque l'envoyeur se trouve sur l'activité de synchronisation des messages, tous les messages seront envoyés avec les données du contact. De même, lorsque l'on veut juste synchroniser les messages, les données de l'envoyeur seront envoyées. 
 - Pourquoi envoi de beaucoup de messages si long?
 - Implémenter les feedback
