@@ -134,5 +134,12 @@ public class BrowseContacts extends Activity {
         finish();
     }
 
+    public void goToAddContact(View view) {
+        Intent intent = new Intent(this, AddContactActivity.class);
+        intent.setAction("NewActivity");
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+
+    }
 
 }

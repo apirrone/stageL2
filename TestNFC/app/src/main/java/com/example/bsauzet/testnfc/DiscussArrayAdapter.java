@@ -7,6 +7,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,7 @@ public class DiscussArrayAdapter extends ArrayAdapter<OneComment> {
         countryName.setText(coment.comment);
 
         countryName.setBackgroundResource(coment.left ? R.drawable.bubble_yellow : R.drawable.bubble_green);
+        countryName.setTextColor(coment.left ? Color.BLACK : Color.WHITE);
         wrapper.setGravity(coment.left ? Gravity.LEFT : Gravity.RIGHT);
 
         return row;

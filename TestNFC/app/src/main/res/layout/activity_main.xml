@@ -12,7 +12,7 @@
         android:choiceMode="singleChoice"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/textView5"
-        android:layout_above="@+id/imageButton3" />
+        android:layout_above="@+id/imageButton4" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,14 +23,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageButton3"
-        android:background="@drawable/addcontactbutton"
-        android:onClick="goToAddContact"
-        android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/textView5" />
+
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -38,7 +31,7 @@
         android:id="@+id/imageButton4"
         android:onClick="browseContactsButton"
         android:background="@drawable/newmessagebutton"
-        android:layout_below="@+id/listViewConversation"
-        android:layout_toEndOf="@+id/textView5" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
