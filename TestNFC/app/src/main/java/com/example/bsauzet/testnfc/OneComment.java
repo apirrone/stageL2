@@ -10,4 +10,8 @@ public class OneComment {
         this.comment = comment;
     }
 
+    public String getComment(){
+        return comment;
+    }
+
 }

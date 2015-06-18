@@ -17,6 +17,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
@@ -66,7 +67,8 @@ public class BrowseMessages extends Activity {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-               itemToDelete = (String) lv.getItemAtPosition(position);
+                OneComment oc = (OneComment)lv.getItemAtPosition(position);
+                itemToDelete = oc.getComment();
 
                 new AlertDialog.Builder(BrowseMessages.this)
                         .setTitle("Delete message")
@@ -97,7 +99,12 @@ public class BrowseMessages extends Activity {
     public void updateView(){
         final List<Message> messages = sqLiteHelper.getMessagesChatConcerningUser(userPk);
 
+        for(int i = 0; i<messages.size() ; i++)
+            System.out.println("ms : "+ messages.get(i).getDate());
+
         sortMessagesByDate(messages);
+        for(int i = 0; i<messages.size() ; i++)
+            System.out.println("ms : "+ messages.get(i).getDate());
 
         adapter = new DiscussArrayAdapter(getApplicationContext(), R.layout.listitem_discuss);
         lv.setAdapter(adapter);
@@ -149,7 +156,7 @@ public class BrowseMessages extends Activity {
         if(m.size()>0)
             quickSort(0, m.size() -1, m);
         for(int i = 0 ; i < m.size() ; i++)
-            Log.i("tamere", "date : "+m.get(i).getDate());
+            Log.i("tamere", "date : "+m.get(i).getDate()+ new String(m.get(i).getContent()));
     }
 
     public void quickSort(int lowerIndex, int higherIndex, List<Message> m){
@@ -178,8 +185,8 @@ public class BrowseMessages extends Activity {
             quickSort(i, higherIndex, m);
     }
     private void exchangeMessages(int i, int j, List<Message> m) {
-        double temp = m.get(i).getDate();
-        m.get(i).setDate(m.get(j).getDate());
-        m.get(j).setDate(temp);
+        Message temp = m.get(i);
+        m.set(i,m.get(j));
+        m.set(j,temp);
     }
 }
