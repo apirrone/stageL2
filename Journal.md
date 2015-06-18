@@ -164,6 +164,9 @@ Les conversations sont "nommées" en fonction de la personne avec qui on discute
 17/06 : On s'est débattus avec git une partie de la matinée, on revient a quelque chose de stable
 Ajout d'un meilleur systeme de visualisation des conversations. Correction de bugs. Nettoyage du code. Début de tri des messages dans les conversations en fonction de leur dates d'envoi (ne fonctionne pas encore)
 
+18/06 : Pour le signal de suppression : Nouvelle table dans la base de données avec deux champs : UUID et date d'arrivée sur la base.  Lorsque quelqu'un reçoit un message qui lui est destiné, il renvoie l'uuid du message sur le reseau. Les intermédiaires qui recoivent cet uuid suppriment le message correspondant, ajoutent l'UUID dans leur base de données et diffusent cet UUID. Pour ne pas encombrer la base de données mais quand même maximiser les chances de diffusion du signal, on utilisera un système de table de taille fixe avec remplacement des signaux les plus anciens (taille à définir). Lorsque l'envoyeur du message initial reçoit l'uuid, il le traite comme accusé de reception.
+EDIT : Ou alors on se passe du champ date et on considère que les messages les plus anciens sont plus "hauts" dans la base de données, ce qui implique un traitement plus lourd : décaler touts les messages vers le "bas" lorsqu'on insère une nouvelle valeur, alors qu'avec le champ date, on remplace simplement le champ avec la date la plus vieille. C'est mémoire vs performance.
+
 
 TODO
 ---------------------
