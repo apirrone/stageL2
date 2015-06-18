@@ -252,7 +252,13 @@ public class MainActivity extends Activity{
         nfcAdapter.disableForegroundDispatch(this);
     }
 
+    public void goToAddContact(View view) {
+        Intent intent = new Intent(this, AddContactActivity.class);
+        intent.setAction("NewActivity");
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
 
+    }
 
     public void browseContactsButton(View view) {
         Intent intent = new Intent(this, BrowseContacts.class);

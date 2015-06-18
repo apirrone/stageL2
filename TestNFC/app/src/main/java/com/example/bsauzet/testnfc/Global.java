@@ -5,5 +5,7 @@ package com.example.bsauzet.testnfc;
  */
 public class Global {
 
-    public static final int INITIAL_TIMEOUT = 30;
+    public static final int INITIAL_TIMEOUT = 600;
+
+    public static final int MAX_SIGNALS = 20;
 }
