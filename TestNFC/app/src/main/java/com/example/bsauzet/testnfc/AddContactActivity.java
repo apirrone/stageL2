@@ -71,19 +71,11 @@ public class AddContactActivity extends Activity{
     public void onResume() {
         super.onResume();
 
-//        Intent intent = getIntent();
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-//        IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-//
-//        try {
-//            ndef.addDataType("text/plain");
-//        } catch (IntentFilter.MalformedMimeTypeException e) {
-//            e.printStackTrace();
-//        }
-//
-//        IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
+
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+
     }
 
     public void addContactDataBase(String publicKey, String name){

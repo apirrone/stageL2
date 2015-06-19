@@ -225,7 +225,7 @@ public class MainActivity extends Activity{
                 m = sqLiteHelper.getMessageChat(uui);
                 if(m!=null) {
                     if (m.getPublicKeySource().equals(KeysHelper.getMyPublicKey())) {
-                        Toast.makeText(MainActivity.this, "Accusé reception", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "AccusÃ© reception", Toast.LENGTH_SHORT).show();
                     }
                 }
 

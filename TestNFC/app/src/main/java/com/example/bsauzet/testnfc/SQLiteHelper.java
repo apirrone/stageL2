@@ -124,8 +124,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public User getUserByName(String name){
-        db =this.getWritableDatabase();
-
+        boolean toClose = false;
+        if(!db.isOpen()) {
+            db = this.getWritableDatabase();
+            toClose = true;
+        }
         Cursor cursor =
                 db.query(TABLE_USERS,
                         COLUMNS_USERS,
@@ -142,7 +145,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 user = new User(cursor.getString(2), cursor.getString(1));
 
         cursor.close();
-        db.close();
+        if(toClose)
+            db.close();
         return user;
     }
 
@@ -382,9 +386,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 
     public List<Message> getMessagesChatFromContentAndSender(String content, String sender){
-
-        db =this.getWritableDatabase();
-
+        boolean toClose = false;
+        if(!db.isOpen()) {
+            db = this.getWritableDatabase();
+            toClose = true;
+        }
         List<Message> messages = new LinkedList<Message>();
 
         String userPk = getUserByName(sender).getPublicKey();
@@ -416,7 +422,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        if(toClose)
+            db.close();
 
         return messagesToReturn;
     }
