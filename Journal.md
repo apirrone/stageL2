@@ -191,7 +191,9 @@ Structurer les données pour la création des bases : deux tables :
 - Ajout de contact depuis n'importe quelle activité pour l'envoyeur (?) -> Peut être lourd lorsque l'envoyeur se trouve sur l'activité de synchronisation des messages, tous les messages seront envoyés avec les données du contact. De même, lorsque l'on veut juste synchroniser les messages, les données de l'envoyeur seront envoyées. 
 - // l'envoi des coordonnées se fait sur al vue addcontact & la vue browse contacts.
 - Pourquoi envoi de beaucoup de messages si long?
-- Implémenter les feedback
+- Implémenter les feedback OK
+- Notifier l'accusé de reception pour chaque message
+- Notifier l'arrivée d'un nouveau message
 - Refonte graphique 
 - Documentation (utilisation + doc technique)
 - tests
