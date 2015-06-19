@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -162,6 +163,8 @@ public class MainActivity extends Activity{
         super.onResume();
         updateView();
 
+        debuglog();
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 
@@ -206,6 +209,29 @@ public class MainActivity extends Activity{
                 j++;
                 incMessages.add(new Message(uuid, message, source, dest, date));
             }
+            temp = new String(inNdefRecords[j].getPayload());
+            int nbSignals = Integer.valueOf(temp);
+            j++;
+
+            for(int i = 0 ; i < nbSignals ; i++) {
+                String uui = new String (inNdefRecords[j].getPayload());
+                sqLiteHelper.addSignal(new Signal(uui));
+                j++;
+
+                Message m = sqLiteHelper.getMessage(uui);
+                if(m != null)
+                    sqLiteHelper.deleteMessage(m);
+
+                m = sqLiteHelper.getMessageChat(uui);
+                if(m!=null) {
+                    Toast.makeText(MainActivity.this, "mnull", Toast.LENGTH_SHORT).show();
+                    if (m.getPublicKeySource().equals(KeysHelper.getMyPublicKey())) {
+                        Toast.makeText(MainActivity.this, "Accusé reception", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+            }
 
             try {
                 addNotKnownMessages(incMessages);
@@ -221,21 +247,30 @@ public class MainActivity extends Activity{
         myMessages.addAll(sqLiteHelper.getAllMessagesChat());
         for(int i = 0 ; i < mess.size() ; i++) {
             boolean newMess = true;
-            for (int j = 0; j < myMessages.size(); j++) {
+
+            for (int j = 0; j < myMessages.size(); j++)
                 if (mess.get(i).getUuid().equals(myMessages.get(j).getUuid())) {
                     newMess = false;
                     break;
                 }
-            }
+
+
             if(newMess) {
                 //If the message is for me
                 if(mess.get(i).getPublicKeyDest().equals(KeysHelper.getMyPublicKey())) {
                     //Add the message to the chat database table
                     Message m = new Message(mess.get(i).getUuid(), CryptoHelper.RSADecryptByte(mess.get(i).getContent(), KeysHelper.getMyPrivateKey()), mess.get(i).getPublicKeySource(), mess.get(i).getPublicKeyDest(), mess.get(i).getDate());
                     sqLiteHelper.addMessageToChat(m);
+
+                    //TODO Corriger bug "attempt to re-open an already-closed object"
+                    //sqLiteHelper.addSignal(new Signal(m.getUuid()));
                 }
-                else
+                else {
                     sqLiteHelper.addMessage(mess.get(i));//Add the message to the messages database table (we are an intermediate)
+                }
+            }
+            else{
+
             }
         }
     }
@@ -250,6 +285,11 @@ public class MainActivity extends Activity{
     public void onPause() {
         super.onPause();
         nfcAdapter.disableForegroundDispatch(this);
+    }
+
+    public void onStop(){
+        super.onStop();
+        //sqLiteHelper.close();
     }
 
     public void goToAddContact(View view) {
@@ -269,20 +309,24 @@ public class MainActivity extends Activity{
     public NdefMessage createNdefMessageAllMessages(){
 
         List<Message> messages = sqLiteHelper.getAllMessages();
+        List<Signal> signals = sqLiteHelper.getAllSignals();
+
+        String nbMessages = String.valueOf(messages.size());
+        String nbSignals = String.valueOf(signals.size());
+
+        NdefRecord[] ndefRecords = new NdefRecord[(messages.size() * 5) + 1 + (signals.size() +1)];//(5 champs * nb messages) + champ "nbMessages" + (1 champ * nb signals) + "nbsignals"
+
+        //add nb of messages
+        ndefRecords[0] = new NdefRecord(
+                NdefRecord.TNF_MIME_MEDIA,
+                "text/plain".getBytes(),
+                new byte[]{},
+                nbMessages.getBytes());
+
+        int j = 1;
         if(!messages.isEmpty()) {
-            String nbMessages = String.valueOf(messages.size());
-
-            NdefRecord[] ndefRecords = new NdefRecord[(messages.size() * 5) + 1];
-
-            ndefRecords[0] = new NdefRecord(
-                    NdefRecord.TNF_MIME_MEDIA,
-                    "text/plain".getBytes(),
-                    new byte[]{},
-                    nbMessages.getBytes());
-
-            int j = 1;
             for (int i = 0; i < messages.size(); i++) {
-                if(messages.get(i).getSent() == false)
+                if (messages.get(i).getSent() == false)
                     sqLiteHelper.updateSent(messages.get(i));
 
 
@@ -317,20 +361,39 @@ public class MainActivity extends Activity{
                         String.valueOf(messages.get(i).getDate()).getBytes());
                 j++;
             }
-
-            NdefMessage ndefMessageout = new NdefMessage(ndefRecords);
-
-            return ndefMessageout;
         }
-        else
-            return null;
+        //add nb of signals
+        ndefRecords[j] = new NdefRecord(
+                NdefRecord.TNF_MIME_MEDIA,
+                "text/plain".getBytes(),
+                new byte[]{},
+                nbSignals.getBytes());
+        j++;
+
+        if(!signals.isEmpty()){
+            for(int i = 0 ; i < signals.size() ; i++) {
+                ndefRecords[j] = new NdefRecord(
+                        NdefRecord.TNF_MIME_MEDIA,
+                        "text/plain".getBytes(),
+                        new byte[]{},
+                        signals.get(i).getUuid().getBytes());
+                j++;
+            }
+        }
+
+        NdefMessage ndefMessageout = new NdefMessage(ndefRecords);
+
+        return ndefMessageout;
+
     }
 
 
     //Displays the database content on the Log
-    public void debuglog(View view) {
+    public void debuglog() {
         List<Message> convMessages = sqLiteHelper.getAllMessagesChat();
         List<Message> transitMessages = sqLiteHelper.getAllMessages();
+        List<Signal> signals = sqLiteHelper.getAllSignals();
+
         Log.i("DATABASE", "id --- content --- sent --- timeout ");
         for(int i = 0 ; i < convMessages.size() ; i++){
             double now = (double)System.currentTimeMillis()/1000.0;
@@ -341,6 +404,10 @@ public class MainActivity extends Activity{
             double now = (double)System.currentTimeMillis()/1000.0;
             Message m = transitMessages.get(i);
             Log.i("DATABASE trans", ""+m.getUuid()+" --- "+m.getContent()+" --- "+m.getSent()+" --- "+(now - m.getTimeout()));
+        }
+        for(int i = 0 ; i < signals.size() ; i++){
+            Signal s = signals.get(i);
+            Log.i("DATABASE signal", "uuid :"+s.getUuid());
         }
 
     }
