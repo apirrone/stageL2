@@ -189,10 +189,12 @@ Structurer les données pour la création des bases : deux tables :
 - Renommage des contacts OK
 - Distinguer les messages reçus des messages envoyés OK
 - Ajout de contact depuis n'importe quelle activité pour l'envoyeur (?) -> Peut être lourd lorsque l'envoyeur se trouve sur l'activité de synchronisation des messages, tous les messages seront envoyés avec les données du contact. De même, lorsque l'on veut juste synchroniser les messages, les données de l'envoyeur seront envoyées. 
+- // l'envoi des coordonnées se fait sur al vue addcontact & la vue browse contacts.
 - Pourquoi envoi de beaucoup de messages si long?
 - Implémenter les feedback
 - Refonte graphique 
 - Documentation (utilisation + doc technique)
+- tests
 
 
 Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer), invokebeam.
