@@ -87,7 +87,7 @@ public class MainActivity extends Activity{
         //fetch all messages concerning me
         List<Message> messages = sqLiteHelper.getMessagesChatFromPublicKeyDestAndSource(KeysHelper.getMyPublicKey());
         QuickSortHelper.sortMessagesByDate(messages);
-
+        users = new ArrayList<User>();
         //Updating the conversations view
         for(int i = 0 ; i < messages.size() ; i++)
             if(!localUserExists(messages.get(i).getPublicKeySource())){
@@ -289,7 +289,6 @@ public class MainActivity extends Activity{
 
     public void onDestroy(){
         super.onDestroy();
-        sqLiteHelper.closeDb();
     }
 
     public void goToAddContact(View view) {
