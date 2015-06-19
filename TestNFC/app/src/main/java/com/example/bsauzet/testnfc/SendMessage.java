@@ -11,6 +11,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.UUID;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -52,12 +53,11 @@ public class SendMessage extends Activity {
 
     public void sendButton(View view) {
         byte[] text = getEncryptedMessage(mEdit.getText().toString());
-        Message messageEncr = new Message(text, myPk, destPk);
-        Message messageCl = new Message(mEdit.getText().toString().getBytes(), myPk, destPk);
+        Message message = new Message(text, myPk, destPk);
+        sqLiteHelper.addMessage(message);
 
-
-        sqLiteHelper.addMessage(messageEncr);
-        sqLiteHelper.addMessageToChat(messageCl);
+        message.setContent(mEdit.getText().toString().getBytes());
+        sqLiteHelper.addMessageToChat(message);
         Toast.makeText(SendMessage.this, "Message sent", Toast.LENGTH_SHORT).show();
         finish();
 

@@ -224,7 +224,6 @@ public class MainActivity extends Activity{
 
                 m = sqLiteHelper.getMessageChat(uui);
                 if(m!=null) {
-                    Toast.makeText(MainActivity.this, "mnull", Toast.LENGTH_SHORT).show();
                     if (m.getPublicKeySource().equals(KeysHelper.getMyPublicKey())) {
                         Toast.makeText(MainActivity.this, "Accusé reception", Toast.LENGTH_SHORT).show();
                     }
@@ -263,7 +262,7 @@ public class MainActivity extends Activity{
                     sqLiteHelper.addMessageToChat(m);
 
                     //TODO Corriger bug "attempt to re-open an already-closed object"
-                    //sqLiteHelper.addSignal(new Signal(m.getUuid()));
+                    sqLiteHelper.addSignal(new Signal(m.getUuid()));
                 }
                 else {
                     sqLiteHelper.addMessage(mess.get(i));//Add the message to the messages database table (we are an intermediate)
