@@ -54,7 +54,7 @@ public class BrowseMessages extends Activity {
         tv.setText(userName);
 
         lv = (ListView)findViewById(R.id.listView);
-        sqLiteHelper = new SQLiteHelper(this);
+        sqLiteHelper = SQLiteHelper.getInstance(getApplicationContext());
         mEdit = (EditText)findViewById(R.id.editText);
 
 
@@ -102,7 +102,7 @@ public class BrowseMessages extends Activity {
         for(int i = 0; i<messages.size() ; i++)
             System.out.println("ms : "+ messages.get(i).getDate());
 
-        sortMessagesByDate(messages);
+        QuickSortHelper.sortMessagesByDate(messages);
         for(int i = 0; i<messages.size() ; i++)
             System.out.println("ms : "+ messages.get(i).getDate());
 
@@ -152,41 +152,5 @@ public class BrowseMessages extends Activity {
         lv.setSelection(adapter.getCount() -1);
     }
 
-    public void sortMessagesByDate(List<Message> m){
-        if(m.size()>0)
-            quickSort(0, m.size() -1, m);
-        for(int i = 0 ; i < m.size() ; i++)
-            Log.i("tamere", "date : "+m.get(i).getDate()+ new String(m.get(i).getContent()));
-    }
 
-    public void quickSort(int lowerIndex, int higherIndex, List<Message> m){
-
-        int i = lowerIndex;
-        int j = higherIndex;
-
-        double pivot = m.get(lowerIndex+(higherIndex-lowerIndex)/2).getDate();
-
-        while (i <= j) {
-            while (m.get(i).getDate() < pivot) {
-                i++;
-            }
-            while (m.get(j).getDate() > pivot) {
-                j--;
-            }
-            if (i <= j) {
-                exchangeMessages(i, j, m);
-                i++;
-                j--;
-            }
-        }
-        if (lowerIndex < j)
-            quickSort(lowerIndex, j, m);
-        if (i < higherIndex)
-            quickSort(i, higherIndex, m);
-    }
-    private void exchangeMessages(int i, int j, List<Message> m) {
-        Message temp = m.get(i);
-        m.set(i,m.get(j));
-        m.set(j,temp);
-    }
 }

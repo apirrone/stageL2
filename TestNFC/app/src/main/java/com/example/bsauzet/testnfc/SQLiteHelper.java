@@ -22,6 +22,8 @@ import javax.crypto.NoSuchPaddingException;
  */
 public class SQLiteHelper extends SQLiteOpenHelper {
 
+    private static SQLiteHelper sInstance;
+
     private static final int DATABASE_VERSION = 1;
     private static final String DATABSE_NAME = "database";
 
@@ -58,14 +60,24 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String[] COLUMNS_CHAT = {KEY_CHAT_ID, KEY_CHAT_UUID, KEY_CHAT_CONTENT, KEY_CHAT_IDSOURCE, KEY_CHAT_IDDEST, KEY_CHAT_DATE};
     private static final String[] COLUMNS_SIGNAL = {KEY_SIGNAL_UUID, KEY_SIGNAL_DATE};
 
-    public SQLiteHelper(Context context){
-        super(context, DATABSE_NAME, null, DATABASE_VERSION);
+    SQLiteDatabase db;
+
+    public static synchronized SQLiteHelper getInstance(Context context){
+        if(sInstance == null)
+            sInstance = new SQLiteHelper(context);
+
+        return sInstance;
     }
 
-    SQLiteDatabase db;
+    public SQLiteHelper(Context context){
+        super(context, DATABSE_NAME, null, DATABASE_VERSION);
+        db = getWritableDatabase();
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+
 
         Log.d(null, "Create base");
         String CREATE_USERS_TABLE = "CREATE TABLE users ( " +
@@ -95,7 +107,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "uuid TEXT, " +
                 "date REAL )";
-
         db.execSQL(CREATE_USERS_TABLE);
         db.execSQL(CREATE_MESSAGES_TABLE);
         db.execSQL(CREATE_CHAT_TABLE);
@@ -103,32 +114,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public int numberOfUsers(){
-        db =this.getWritableDatabase();
         int ret = (int)DatabaseUtils.queryNumEntries(db, "users");
-        db.close();
         return ret;
 
     }
 
     public void addUser(User user){
 
-         db =this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put(KEY_USERS_NAME, user.getName());
         values.put(KEY_USERS_PUBLICKEY, user.getPublicKey());
 
         db.insert(TABLE_USERS, null, values);
-
-        db.close();
     }
 
     public User getUserByName(String name){
-        boolean toClose = false;
-        if(!db.isOpen()) {
-            db = this.getWritableDatabase();
-            toClose = true;
-        }
         Cursor cursor =
                 db.query(TABLE_USERS,
                         COLUMNS_USERS,
@@ -145,13 +145,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 user = new User(cursor.getString(2), cursor.getString(1));
 
         cursor.close();
-        if(toClose)
-            db.close();
         return user;
     }
 
     public User getUserByPublicKey(String publicKey){
-        db =this.getWritableDatabase();
         Cursor cursor =
                 db.query(TABLE_USERS,
                         COLUMNS_USERS,
@@ -169,13 +166,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 user = new User(cursor.getString(2), cursor.getString(1));
 
         cursor.close();
-        db.close();
         return user;
     }
 
     public List<User> getAllUsers(){
 
-        SQLiteDatabase db =this.getWritableDatabase();
         List<User> users = new LinkedList<User>();
 
         String query = "SELECT * FROM " + TABLE_USERS;
@@ -191,25 +186,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
 
         cursor.close();
-        db.close();
         return users;
     }
 
     public void updateUserName(User u, String name){
-        db =this.getWritableDatabase();
          ContentValues values = new ContentValues();
         values.put(KEY_USERS_NAME, name);
         db.update(TABLE_USERS, values, KEY_USERS_NAME + "=?", new String[]{u.getName()});
-        db.close();
     }
 
     public void deleteUser(User user){
-        db =this.getWritableDatabase();
         db.delete(TABLE_USERS,
                 KEY_USERS_PUBLICKEY + " = ?",
                 new String[]{String.valueOf(user.getPublicKey())});
 
-        db.close();
     }
 
     public boolean userExists(String publicKey, String name){
@@ -220,7 +210,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void addMessage(Message message){
-        db =this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_MESSAGES_UUID, message.getUuid());
@@ -232,12 +221,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_MESSAGES_DATE, message.getDate());
         db.insert(TABLE_MESSAGES, null, values);
 
-        db.close();
 
     }
 
     public Message getMessage(String uuid){
-        db =this.getWritableDatabase();
         Cursor cursor =
                 db.query(TABLE_MESSAGES,
                         COLUMNS_MESSAGES,
@@ -255,19 +242,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             Message message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
 
             cursor.close();
-            db.close();
             return message;
         }
         else {
             cursor.close();
-            db.close();
             return null;
         }
 
     }
 
     public List<Message> getMessagesFromPublicKeyDest(String pbk){
-        db =this.getWritableDatabase();
         List<Message> messages = new LinkedList<Message>();
          Cursor cursor = db.query(TABLE_MESSAGES,
                  COLUMNS_MESSAGES,
@@ -287,18 +271,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
 
         cursor.close();
-        db.close();
         return messages;
     }
 
 
     public List<Message> getAllMessages(){
-        db =this.getWritableDatabase();
         List<Message> messages = new LinkedList<Message>();
 
         String query = "SELECT * FROM " + TABLE_MESSAGES;
 
-         Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery(query, null);
 
         Message message = null;
 
@@ -309,7 +291,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
 
         cursor.close();
-        db.close();
         return messages;
     }
 //
@@ -354,24 +335,18 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 //    }
 
     public void updateSent(Message message){
-        db =this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_MESSAGES_SENT, 1);
         db.update(TABLE_MESSAGES, values, KEY_MESSAGES_UUID + "=?", new String[]{message.getUuid()});
-        db.close();
     }
 
     public void deleteMessage(Message message){
-        db =this.getWritableDatabase();
         db.delete(TABLE_MESSAGES,
                 KEY_MESSAGES_UUID + " = ?",
                 new String[]{String.valueOf(message.getUuid())});
-        db.close();
     }
 
     public void addMessageToChat(Message message){
-
-        db =this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_CHAT_UUID, message.getUuid());
@@ -381,16 +356,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_CHAT_DATE, message.getDate());
 
         db.insert(TABLE_CHAT, null, values);
-        db.close();
     }
 
 
     public List<Message> getMessagesChatFromContentAndSender(String content, String sender){
-        boolean toClose = false;
-        if(!db.isOpen()) {
-            db = this.getWritableDatabase();
-            toClose = true;
-        }
         List<Message> messages = new LinkedList<Message>();
 
         String userPk = getUserByName(sender).getPublicKey();
@@ -422,14 +391,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        if(toClose)
-            db.close();
 
         return messagesToReturn;
     }
 
     public List<Message> getMessagesChatConcerningUser(String pbk){
-        db =this.getWritableDatabase();
         String myPbk = KeysHelper.getMyPublicKey();
 
         List<Message> messages = new LinkedList<Message>();
@@ -451,24 +417,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
 
         cursor.close();
-        db.close();
 
         return messages;
     }
 
     public void deleteMessageChat(Message message){
 
-        db =this.getWritableDatabase();
 
         db.delete(TABLE_CHAT,
                 KEY_CHAT_UUID + " = ?",
                 new String[]{String.valueOf(message.getUuid())});
-        db.close();
     }
 
     public List<Message> getMessagesChatFromPublicKeyDestAndSource(String pbk){
 
-        db =this.getWritableDatabase();
 
         List<Message> messages = new LinkedList<Message>();
          Cursor cursor = db.query(TABLE_CHAT,
@@ -489,14 +451,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
 
         cursor.close();
-        db.close();
 
         return messages;
     }
 
     public List<Message> getAllMessagesChat(){
 
-        db =this.getWritableDatabase();
 
         List<Message> messages = new LinkedList<Message>();
 
@@ -513,14 +473,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
 
         cursor.close();
-        db.close();
         return messages;
     }
 
 
     public Message getMessageChat(String uuid){
 
-        db =this.getWritableDatabase();
 
         Cursor cursor =
                 db.query(TABLE_CHAT,
@@ -540,19 +498,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             Message message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5));
 
             cursor.close();
-            db.close();
             return message;
         }
         else {
             cursor.close();
-            db.close();
             return null;
         }
     }
 
     public void addSignal(Signal s){
 
-        db =this.getWritableDatabase();
 
         if(!signalExists(s)) {
             if (numberOfSignals() >= Global.MAX_SIGNALS) {
@@ -566,17 +521,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             }
         }
 
-        db.close();
     }
 
     public Signal getSignal(String uuid){
-
-        boolean toClose = false;
-
-        if(!db.isOpen()) {
-            db = this.getWritableDatabase();
-            toClose = true;
-        }
 
         Cursor cursor =
                 db.query(TABLE_SIGNAL,
@@ -594,22 +541,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 s = new Signal(cursor.getString(1));
 
         cursor.close();
-        if(toClose)
-            db.close();
 
         return s;
     }
 
     public int numberOfSignals(){
-        boolean toClose = false;
-        if(!db.isOpen()) {
-            db = this.getWritableDatabase();
-            toClose = true;
-        }
         int ret = (int)DatabaseUtils.queryNumEntries(db, "signal");
-        if(toClose)
-            db.close();
-
         return ret;
     }
 
@@ -630,16 +567,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void updateSignal(Signal o, Signal n){
-        db =this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_SIGNAL_UUID, n.getUuid());
         values.put(KEY_SIGNAL_DATE, n.getDate());
         db.update(TABLE_SIGNAL, values, KEY_SIGNAL_UUID + "=?", new String[]{o.getUuid()});
-        db.close();
     }
 
     public List<Signal> getAllSignals(){
-        db =this.getWritableDatabase();
 
         List<Signal> signals = new LinkedList<Signal>();
 
@@ -655,7 +589,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 signals.add(s);
             }while(cursor.moveToNext());
         cursor.close();
-        db.close();
 
         return signals;
     }
@@ -682,6 +615,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public void deleteAllUsers(SQLiteDatabase db){
         db.execSQL("DROP TABLE IF EXISTS users");
+    }
+
+    public void closeDb(){
+        db.close();
     }
 
 }

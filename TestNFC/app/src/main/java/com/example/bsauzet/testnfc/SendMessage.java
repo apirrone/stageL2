@@ -34,7 +34,7 @@ public class SendMessage extends Activity {
 
         Intent intent = getIntent();
 
-        sqLiteHelper = new SQLiteHelper(this);
+        sqLiteHelper = SQLiteHelper.getInstance(getApplicationContext());
         destName = intent.getStringExtra("name");
         destPk = intent.getStringExtra("pk");
         myPk = KeysHelper.getMyPublicKey();

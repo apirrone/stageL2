@@ -51,7 +51,7 @@ public class MainActivity extends Activity{
         if(KeysHelper.getMyPublicKey() == null)
             KeysHelper.generateKeys(getApplicationContext());
 
-        sqLiteHelper = new SQLiteHelper(this);
+        sqLiteHelper = SQLiteHelper.getInstance(getApplicationContext());
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 
@@ -86,6 +86,7 @@ public class MainActivity extends Activity{
     public void updateView(){
         //fetch all messages concerning me
         List<Message> messages = sqLiteHelper.getMessagesChatFromPublicKeyDestAndSource(KeysHelper.getMyPublicKey());
+        QuickSortHelper.sortMessagesByDate(messages);
 
         //Updating the conversations view
         for(int i = 0 ; i < messages.size() ; i++)
@@ -261,8 +262,8 @@ public class MainActivity extends Activity{
                     Message m = new Message(mess.get(i).getUuid(), CryptoHelper.RSADecryptByte(mess.get(i).getContent(), KeysHelper.getMyPrivateKey()), mess.get(i).getPublicKeySource(), mess.get(i).getPublicKeyDest(), mess.get(i).getDate());
                     sqLiteHelper.addMessageToChat(m);
 
-                    //TODO Corriger bug "attempt to re-open an already-closed object"
                     sqLiteHelper.addSignal(new Signal(m.getUuid()));
+                    Toast.makeText(MainActivity.this, "New message !", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     sqLiteHelper.addMessage(mess.get(i));//Add the message to the messages database table (we are an intermediate)
@@ -286,9 +287,9 @@ public class MainActivity extends Activity{
         nfcAdapter.disableForegroundDispatch(this);
     }
 
-    public void onStop(){
-        super.onStop();
-        //sqLiteHelper.close();
+    public void onDestroy(){
+        super.onDestroy();
+        sqLiteHelper.closeDb();
     }
 
     public void goToAddContact(View view) {

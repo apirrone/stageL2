@@ -37,7 +37,7 @@ public class BrowseContacts extends Activity {
 
 
         lv = (ListView)findViewById(R.id.ListContacts);
-        sqLiteHelper = new SQLiteHelper(this);
+        sqLiteHelper = SQLiteHelper.getInstance(getApplicationContext());
 
         updateView();
 

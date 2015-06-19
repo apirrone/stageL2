@@ -43,7 +43,7 @@ public class AddContactActivity extends Activity{
 
         Intent intent = getIntent();
 
-        sqLiteHelper = new SQLiteHelper(this);
+        sqLiteHelper = SQLiteHelper.getInstance(getApplicationContext());
 
         nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
             @Override public NdefMessage createNdefMessage(NfcEvent event) {
