@@ -166,10 +166,14 @@ Ajout d'un meilleur systeme de visualisation des conversations. Correction de bu
 
 18/06 : Pour le signal de suppression : Nouvelle table dans la base de données avec deux champs : UUID et date d'arrivée sur la base.  Lorsque quelqu'un reçoit un message qui lui est destiné, il renvoie l'uuid du message sur le reseau. Les intermédiaires qui recoivent cet uuid suppriment le message correspondant, ajoutent l'UUID dans leur base de données et diffusent cet UUID. Pour ne pas encombrer la base de données mais quand même maximiser les chances de diffusion du signal, on utilisera un système de table de taille fixe avec remplacement des signaux les plus anciens (taille à définir). Lorsque l'envoyeur du message initial reçoit l'uuid, il le traite comme accusé de reception.
 EDIT : Ou alors on se passe du champ date et on considère que les messages les plus anciens sont plus "hauts" dans la base de données, ce qui implique un traitement plus lourd : décaler touts les messages vers le "bas" lorsqu'on insère une nouvelle valeur, alors qu'avec le champ date, on remplace simplement le champ avec la date la plus vieille. C'est mémoire vs performance.
+EDIT : Nous avons choisis la solution avec date stockée.
 
 Conversations :
-Pour afficher les conversations comme sur les applications sms de nos smartphones, nous avons utilisé un échantillon de code pour créer les "bulles de conversation". Nous avons donc réutilisé le code de ce projet : https://github.com/warting/AndroidChatBubbles . 
-Les messages sont triés dans l'ordre chronologique de création (attribut date dans la base de données ) et affichés différemment en fonction de la source (moi ou mon interlocuteur).
+Pour afficher les conversations comme sur les applications sms de nos smartphones, nous avons utilisé un échantillon de code pour créer les "bulles de conversation". Nous avons réutilisé une partie du code de ce projet : https://github.com/warting/AndroidChatBubbles . 
+
+Les messages sont triés dans l'ordre chronologique de création (attribut date dans la base de données ) et affichés différemment en fonction de la source (moi ou mon interlocuteur
+
+19/06 : Après une grosse séance de correction de bugs, les signaux de suppression sont fonctionnels. 
 
 TODO
 ---------------------
