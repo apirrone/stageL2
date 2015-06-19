@@ -1,7 +1,5 @@
 package com.example.bsauzet.testnfc;
 
-import android.util.Log;
-
 import java.util.List;
 
 /**
