@@ -19,6 +19,15 @@ public class AddContactActivity extends Activity{
     EditText editText;
     SQLiteHelper sqLiteHelper;
 
+
+    /**
+     *  Creation of the Activity
+     *
+     *  Here we initialize and
+     *  set up the NFC callback to allow public key exchange
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +41,13 @@ public class AddContactActivity extends Activity{
         sqLiteHelper = SQLiteHelper.getInstance(getApplicationContext());
 
         nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
+            /**
+             *
+             * ndefMessage is being prepared to send public key
+             *
+             * @param event
+             * @return
+             */
             @Override public NdefMessage createNdefMessage(NfcEvent event) {
 
                 String stringOut = KeysHelper.getMyPublicKey();
@@ -64,6 +80,13 @@ public class AddContactActivity extends Activity{
 
     }
 
+    /**
+     * Processing to the add query to database.
+     * This checks whether the user already exists or not thanks to the publicKey
+     *
+     * @param publicKey
+     * @param name
+     */
     public void addContactDataBase(String publicKey, String name){
         if(!sqLiteHelper.userExists(publicKey, name))
             sqLiteHelper.addUser(new User(name, publicKey));
@@ -90,6 +113,11 @@ public class AddContactActivity extends Activity{
         nfcAdapter.disableForegroundDispatch(this);
     }
 
+    /**
+     * Definitions of processes done on reception of ndefMessages.
+     *
+     * @param intent
+     */
     private void checkAndProcessBeamIntent(Intent intent) {
         String action = intent.getAction();
 

@@ -8,6 +8,10 @@ public class Signal {
     private String uuid;
     private double date;
 
+    /**
+     * Creating signal from the uuid of the message the signal will delete, and the timeout before expiration of the signal
+     * @param uuid
+     */
     public Signal(String uuid){
         this.uuid = uuid;
         this.date = System.currentTimeMillis()/1000.0;
@@ -15,10 +19,6 @@ public class Signal {
 
     public String getUuid() {
         return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public double getDate() {

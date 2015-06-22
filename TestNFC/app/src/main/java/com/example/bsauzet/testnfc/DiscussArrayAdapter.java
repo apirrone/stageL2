@@ -22,6 +22,10 @@ public class DiscussArrayAdapter extends ArrayAdapter<OneComment> {
     private List<OneComment> countries = new ArrayList<OneComment>();
     private LinearLayout wrapper;
 
+    /**
+     * adds the conversation bubble
+     * @param object
+     */
     @Override
     public void add(OneComment object) {
         countries.add(object);
@@ -32,14 +36,30 @@ public class DiscussArrayAdapter extends ArrayAdapter<OneComment> {
         super(context, textViewResourceId);
     }
 
+    /**
+     *
+     * @return the number of bubbles in conversation (number of messages exchanged between 2 persons)
+     */
     public int getCount() {
         return this.countries.size();
     }
 
+    /**
+     * Returns the comment located at the 'index' location
+     * @param index
+     * @return
+     */
     public OneComment getItem(int index) {
         return this.countries.get(index);
     }
 
+    /**
+     * Manages the display
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         if (row == null) {
@@ -62,8 +82,5 @@ public class DiscussArrayAdapter extends ArrayAdapter<OneComment> {
         return row;
     }
 
-    public Bitmap decodeToBitmap(byte[] decodedByte) {
-        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
-    }
 
 }

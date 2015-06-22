@@ -18,6 +18,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
+ * All the methods concerning the databases are defined and implemented here.
+ *
  * Created by Antoine on 29/05/2015.
  */
 public class SQLiteHelper extends SQLiteOpenHelper {
@@ -62,6 +64,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     SQLiteDatabase db;
 
+    /**
+     * This method allows only one instance of database at a time in the application
+     * @param context
+     * @return
+     */
     public static synchronized SQLiteHelper getInstance(Context context){
         if(sInstance == null)
             sInstance = new SQLiteHelper(context);
@@ -74,6 +81,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db = getWritableDatabase();
     }
 
+    /**
+     * Creates the four databases needed for this application : Users, Messages, Chat and Signal
+     * @param db
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
 
@@ -113,12 +124,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_SIGNAL_TABLE);
     }
 
-    public int numberOfUsers(){
-        int ret = (int)DatabaseUtils.queryNumEntries(db, "users");
-        return ret;
 
-    }
-
+    /**
+     *
+     * @param user
+     */
     public void addUser(User user){
 
         ContentValues values = new ContentValues();
@@ -128,6 +138,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.insert(TABLE_USERS, null, values);
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public User getUserByName(String name){
         Cursor cursor =
                 db.query(TABLE_USERS,
@@ -148,6 +163,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return user;
     }
 
+    /**
+     *
+     * @param publicKey
+     * @return
+     */
     public User getUserByPublicKey(String publicKey){
         Cursor cursor =
                 db.query(TABLE_USERS,
@@ -169,6 +189,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return user;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<User> getAllUsers(){
 
         List<User> users = new LinkedList<User>();
@@ -189,12 +213,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return users;
     }
 
+    /**
+     *
+     * @param u the User to be renamed
+     * @param name The new name the User will have
+     */
     public void updateUserName(User u, String name){
          ContentValues values = new ContentValues();
         values.put(KEY_USERS_NAME, name);
         db.update(TABLE_USERS, values, KEY_USERS_NAME + "=?", new String[]{u.getName()});
     }
 
+    /**
+     *
+     * @param user
+     */
     public void deleteUser(User user){
         db.delete(TABLE_USERS,
                 KEY_USERS_PUBLICKEY + " = ?",
@@ -202,6 +235,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Checks if the database doesn't contain already the public key of a user being added
+     * @param publicKey
+     * @param name
+     * @return
+     */
     public boolean userExists(String publicKey, String name){
          if(getUserByName(name) != null || getUserByPublicKey(publicKey) != null)
             return true;
@@ -209,6 +248,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             return false;
     }
 
+    /**
+     *
+     * @param message
+     */
     public void addMessage(Message message){
 
         ContentValues values = new ContentValues();
@@ -224,6 +267,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     *
+     * @param uuid
+     * @return
+     */
     public Message getMessage(String uuid){
         Cursor cursor =
                 db.query(TABLE_MESSAGES,
@@ -251,28 +299,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     }
 
-    public List<Message> getMessagesFromPublicKeyDest(String pbk){
-        List<Message> messages = new LinkedList<Message>();
-         Cursor cursor = db.query(TABLE_MESSAGES,
-                 COLUMNS_MESSAGES,
-                 "idDest = ?",
-                 new String[]{pbk},
-                 null,
-                 null,
-                 null,
-                 null);
-
-
-        Message message = null;
-        if(cursor.moveToFirst())
-            do{
-                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
-                messages.add(message);
-            }while(cursor.moveToNext());
-
-        cursor.close();
-        return messages;
-    }
 
 
     public List<Message> getAllMessages(){
@@ -293,59 +319,31 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cursor.close();
         return messages;
     }
-//
-//    public List<Message> getMessagesFromContentAndSender(String content, String sender){
-//        List<Message> messages = new LinkedList<Message>();
-//
-//        String userPk = getUserByName(sender).getPublicKey();
-//
-//        Cursor cursor = db.query(TABLE_MESSAGES,
-//                COLUMNS_MESSAGES,
-//                "idSource = ? ",
-//                new String[]{userPk},
-//                null,
-//                null,
-//                null,
-//                null);
-//
-//
-//        Message message = null;
-//        if(cursor.moveToFirst())
-//            do{
-//                message = new Message(cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getDouble(5), (cursor.getInt(6) == 1 ? true : false), cursor.getDouble(7));
-//                messages.add(message);
-//            }while(cursor.moveToNext());
-//
-//        List<Message> messagesToReturn = new LinkedList<Message>();
-//        for(int i = 0 ; i < messages.size() ; i++) {
-//            String content1 = null;
-//            try {
-//                content1 = CryptoHelper.RSADecrypt(messages.get(i).getContent(), KeysHelper.getMyPrivateKey());
-//            } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchProviderException | InvalidKeyException e) {
-//                e.printStackTrace();
-//            }
-//
-//            if (content1.equals(content))
-//                messagesToReturn.add(messages.get(i));
-//        }
-//
-//
-//
-//        return messagesToReturn;
-//    }
 
+    /**
+     * Set the "sent" field on true (=> triggers the message timeout)
+     * @param message Message to be marked as sent
+     */
     public void updateSent(Message message){
         ContentValues values = new ContentValues();
         values.put(KEY_MESSAGES_SENT, 1);
         db.update(TABLE_MESSAGES, values, KEY_MESSAGES_UUID + "=?", new String[]{message.getUuid()});
     }
 
+    /**
+     *
+     * @param message
+     */
     public void deleteMessage(Message message){
         db.delete(TABLE_MESSAGES,
                 KEY_MESSAGES_UUID + " = ?",
                 new String[]{String.valueOf(message.getUuid())});
     }
 
+    /**
+     * If a message is for the concerned user, this method adds it to their conversation
+     * @param message
+     */
     public void addMessageToChat(Message message){
 
         ContentValues values = new ContentValues();
@@ -550,6 +548,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return ret;
     }
 
+    /**
+     * As far as the amount of signals kept in base is limited, when we reach the limit, we replace the oldest signal with the newest
+     * @param s
+     */
     public void replaceOldestSignal(Signal s){
 
         List<Signal> signals = getAllSignals();
@@ -609,16 +611,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void deleteAllMessages(SQLiteDatabase db){
-        db.execSQL("DROP TABLE IF EXISTS messages");
-    }
 
-    public void deleteAllUsers(SQLiteDatabase db){
-        db.execSQL("DROP TABLE IF EXISTS users");
-    }
-
-    public void closeDb(){
-        db.close();
-    }
 
 }

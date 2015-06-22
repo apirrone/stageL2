@@ -40,6 +40,10 @@ public class BrowseMessages extends Activity {
 
     private DiscussArrayAdapter adapter;
 
+    /**
+     * Defines all the actions doable in this activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +100,9 @@ public class BrowseMessages extends Activity {
 
     }
 
+    /**
+     * refreshes the view (when a message has arrived)
+     */
     public void updateView(){
         final List<Message> messages = sqLiteHelper.getMessagesChatConcerningUser(userPk);
 
@@ -128,7 +135,11 @@ public class BrowseMessages extends Activity {
         super.onPause();
     }
 
-
+    /**
+     * Transforms the param into an encrypted byte array
+     * @param message content the user wants to send
+     * @return
+     */
     public byte[] getEncryptedMessage(String message){
         try {
             return CryptoHelper.RSAEncrypt(message, userPk);
@@ -138,6 +149,10 @@ public class BrowseMessages extends Activity {
         return null;
     }
 
+    /**
+     *
+     * @param view
+     */
     public void sendButton(View view) {
         byte[] text = getEncryptedMessage(mEdit.getText().toString());
         Message messageEncr = new Message(text, myPublicKey, userPk);

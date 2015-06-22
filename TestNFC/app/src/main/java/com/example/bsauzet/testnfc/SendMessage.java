@@ -27,6 +27,10 @@ public class SendMessage extends Activity {
 
     SQLiteHelper sqLiteHelper;
 
+    /**
+     * Fetches information concerning the person the user wants to chat with
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,10 @@ public class SendMessage extends Activity {
         super.onPause();
     }
 
+    /**
+     * Triggers the sending of a message
+     * @param view
+     */
     public void sendButton(View view) {
         byte[] text = getEncryptedMessage(mEdit.getText().toString());
         Message message = new Message(text, myPk, destPk);
@@ -63,6 +71,11 @@ public class SendMessage extends Activity {
 
     }
 
+    /**
+     *
+     * @param message
+     * @return the message encrypted in a byte array
+     */
     public byte[] getEncryptedMessage(String message){
         try {
             return CryptoHelper.RSAEncrypt(message, destPk);

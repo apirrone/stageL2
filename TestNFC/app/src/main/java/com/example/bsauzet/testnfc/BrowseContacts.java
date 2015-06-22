@@ -30,6 +30,11 @@ public class BrowseContacts extends Activity {
     String itemToEdit;
     NfcAdapter nfcAdapter;
 
+    /**
+     * This method defines the actions doable in this activity
+     * @param savedInstanceState
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +47,7 @@ public class BrowseContacts extends Activity {
         updateView();
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -99,6 +105,11 @@ public class BrowseContacts extends Activity {
         nfcAdapter.disableForegroundDispatch(this);
     }
 
+    /**
+     * Alert used to delete/rename contacts
+     * @param position
+     * @return
+     */
     public boolean longClickAlert(int position){
         itemToEdit = (String) lv.getItemAtPosition(position);
 
@@ -131,6 +142,10 @@ public class BrowseContacts extends Activity {
         return true;
     }
 
+    /**
+     * alert to rename a contact after a long click
+     * @return
+     */
     public boolean renameAlert(){
 
         final EditText input = new EditText(this);
@@ -157,6 +172,9 @@ public class BrowseContacts extends Activity {
         return true;
     }
 
+    /**
+     * refreshes the view
+     */
     public void updateView(){
         List<User> users = sqLiteHelper.getAllUsers();
 
@@ -168,7 +186,10 @@ public class BrowseContacts extends Activity {
         lv.setAdapter(new ArrayAdapter<String>(BrowseContacts.this, android.R.layout.simple_list_item_1, lv_arr));
     }
 
-
+    /**
+     *
+     * @param name
+     */
     public void goToSendActivity(String name){
         Intent intent = new Intent(this, SendMessage.class);
         intent.putExtra("name", name);
@@ -178,6 +199,10 @@ public class BrowseContacts extends Activity {
         finish();
     }
 
+    /**
+     *
+     * @param view
+     */
     public void goToAddContact(View view) {
         Intent intent = new Intent(this, AddContactActivity.class);
         intent.setAction("NewActivity");

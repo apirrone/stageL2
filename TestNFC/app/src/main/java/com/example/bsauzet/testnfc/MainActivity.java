@@ -27,7 +27,9 @@ import java.util.List;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
+/**
+ * The main activity
+ */
 public class MainActivity extends Activity{
 
     ListView lv;
@@ -117,6 +119,10 @@ public class MainActivity extends Activity{
         lv.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, lv_arr));
     }
 
+    /**
+     * Manage the Unregistered users by umerating them
+     * @return
+     */
     public int nextUnknownId(){
         int cmp = 0;
 
@@ -127,6 +133,10 @@ public class MainActivity extends Activity{
         return cmp+1;
     }
 
+    /**
+     *
+     * @param name
+     */
     public void goToBrowseMessagesActivity(String name){
         Intent intent = new Intent(this, BrowseMessages.class);
         User u = getUserByName(name);
@@ -139,6 +149,11 @@ public class MainActivity extends Activity{
         }
     }
 
+    /**
+     * get Users to render the list of conversations
+     * @param name
+     * @return
+     */
     public User getUserByName(String name){
         User u = null;
         for(int i = 0 ; i < users.size() ; i++)
@@ -149,6 +164,11 @@ public class MainActivity extends Activity{
         return u;
     }
 
+    /**
+     * Used to avoid duplications of conversations while fetching messages
+     * @param publicKey
+     * @return
+     */
     public boolean localUserExists(String publicKey){
         boolean exist = false;
         for(int i = 0 ; i < users.size() ; i++)
@@ -179,7 +199,11 @@ public class MainActivity extends Activity{
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
     }
 
-
+    /**
+     * While receiving messages, we check what are the new messages and those we already got in base.
+     * If the user receives a delete signal for a message he sent, it will show him that the message has arrived to destination
+     * @param intent
+     */
     private void checkAndProcessBeamIntent(Intent intent){
         String action = intent.getAction();
 
@@ -242,6 +266,16 @@ public class MainActivity extends Activity{
         }
     }
 
+    /**
+     * Used to fetch messages : messages for the fetching user will go to the 'Chat' database to be rendered on the main activity,
+     * others will remain hidden in the 'Messages' database
+     * @param mess
+     * @throws IllegalBlockSizeException
+     * @throws InvalidKeyException
+     * @throws NoSuchProviderException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     */
     public void addNotKnownMessages(ArrayList<Message> mess) throws IllegalBlockSizeException, InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException, NoSuchPaddingException {
         List<Message> myMessages = sqLiteHelper.getAllMessages();
         myMessages.addAll(sqLiteHelper.getAllMessagesChat());
@@ -291,6 +325,10 @@ public class MainActivity extends Activity{
         super.onDestroy();
     }
 
+    /**
+     *
+     * @param view
+     */
     public void goToAddContact(View view) {
         Intent intent = new Intent(this, AddContactActivity.class);
         intent.setAction("NewActivity");
@@ -299,12 +337,20 @@ public class MainActivity extends Activity{
 
     }
 
+    /**
+     *
+     * @param view
+     */
     public void browseContactsButton(View view) {
         Intent intent = new Intent(this, BrowseContacts.class);
         intent.setAction("NewActivity");
         startActivity(intent);
     }
 
+    /**
+     * Prepares messages and signals to be sent
+     * @return
+     */
     public NdefMessage createNdefMessageAllMessages(){
 
         List<Message> messages = sqLiteHelper.getAllMessages();
@@ -386,8 +432,9 @@ public class MainActivity extends Activity{
 
     }
 
-
-    //Displays the database content on the Log
+    /**
+     * displays the database content on the Log
+     */
     public void debuglog() {
         List<Message> convMessages = sqLiteHelper.getAllMessagesChat();
         List<Message> transitMessages = sqLiteHelper.getAllMessages();

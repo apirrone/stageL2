@@ -24,10 +24,15 @@ import java.util.Date;
 import javax.security.auth.x500.X500Principal;
 
 /**
+ * Here are defined the functions of key generation
+ *
  * Created by bsauzet on 08/06/15.
  */
 public class KeysHelper {
-
+    /**
+     * returns a public key into a String
+     * @return
+     */
     public static String getMyPublicKey(){
         KeyStore ks = null;
         RSAPublicKey publicKey = null;
@@ -51,6 +56,10 @@ public class KeysHelper {
             return null;
     }
 
+    /**
+     * returns the private key into a String
+     * @return
+     */
     public static PrivateKey getMyPrivateKey(){
         KeyStore ks = null;
         PrivateKey privateKey = null;
@@ -73,6 +82,10 @@ public class KeysHelper {
             return null;
     }
 
+    /**
+     * Generation of keys realized by the RSA algorithm. Jelly Bean is required to use the KeyStore which keeps the key hidden on the phone
+     * @param context
+     */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static void generateKeys(Context context){
         Calendar cal = Calendar.getInstance();

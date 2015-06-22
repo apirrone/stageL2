@@ -49,24 +49,13 @@ public class Message {
         return uuid;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
 
     public String getPublicKeySource() {
         return publicKeySource;
     }
 
-    public void setPublicKeySource(String publicKeySource) {
-        this.publicKeySource = publicKeySource;
-    }
-
     public String getPublicKeyDest() {
         return publicKeyDest;
-    }
-
-    public void setPublicKeyDest(String publicKeyDest) {
-        this.publicKeyDest = publicKeyDest;
     }
 
     public byte[] getContent() {
@@ -76,7 +65,6 @@ public class Message {
     public void setContent(byte[] content) {
         this.content = content;
     }
-
 
     public double getTimeout() {
         return timeout;
@@ -88,8 +76,5 @@ public class Message {
 
     public double getDate(){
         return date;
-    }
-    public void setDate(double date){
-        this.date = date;
     }
 }

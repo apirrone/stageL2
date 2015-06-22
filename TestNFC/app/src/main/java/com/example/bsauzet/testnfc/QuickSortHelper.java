@@ -6,12 +6,21 @@ import java.util.List;
  * Created by bsauzet on 19/06/15.
  */
 public class QuickSortHelper {
-
+    /**
+     *
+     * @param m List of Messages to be sorted
+     */
     public static void sortMessagesByDate(List<Message> m){
         if(m.size()>0)
             quickSort(0, m.size() -1, m);
     }
 
+    /**
+     * Implementation of quick sort
+     * @param lowerIndex
+     * @param higherIndex
+     * @param m
+     */
     public static void quickSort(int lowerIndex, int higherIndex, List<Message> m){
 
         int i = lowerIndex;
@@ -37,6 +46,13 @@ public class QuickSortHelper {
         if (i < higherIndex)
             quickSort(i, higherIndex, m);
     }
+
+    /**
+     * Exchanges the messages at the i and j location
+     * @param i
+     * @param j
+     * @param m
+     */
     private static void exchangeMessages(int i, int j, List<Message> m) {
         Message temp = m.get(i);
         m.set(i,m.get(j));
