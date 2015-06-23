@@ -175,6 +175,10 @@ Les messages sont triés dans l'ordre chronologique de création (attribut date 
 
 19/06 : Après une grosse séance de correction de bugs, les signaux de suppression sont fonctionnels. 
 
+22/06 : Javadoc + début du rapport. Lecture de la doc de serval pour l'état de l'art
+
+23/06 : Rapport, Lecture du code de serval
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
