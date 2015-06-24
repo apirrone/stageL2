@@ -175,6 +175,10 @@ Les messages sont triés dans l'ordre chronologique de création (attribut date 
 
 19/06 : Après une grosse séance de correction de bugs, les signaux de suppression sont fonctionnels. 
 
+22/06 : Javadoc + début du rapport. Lecture de la doc de serval pour l'état de l'art
+
+23/06 : Rapport, Lecture du code de serval
+
 TODO
 ---------------------
 Structurer les données pour la création des bases : deux tables :
@@ -197,10 +201,12 @@ Structurer les données pour la création des bases : deux tables :
 - Pourquoi envoi de beaucoup de messages si long?
 - Implémenter les feedback OK
 - Notifier l'accusé de reception pour chaque message
-- Notifier l'arrivée d'un nouveau message
+- Notifier l'arrivée d'un nouveau message OK
+- Cacher clavier apres envoi message
 - Refonte graphique 
 - Documentation (utilisation + doc technique)
 - tests
+- Ecran de chargement pour le premier démarrage (long car génération des clés)
 
 
 Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer), invokebeam.
