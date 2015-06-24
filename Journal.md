@@ -206,6 +206,7 @@ Structurer les données pour la création des bases : deux tables :
 - Refonte graphique 
 - Documentation (utilisation + doc technique)
 - tests
+- Ecran de chargement pour le premier démarrage (long car génération des clés)
 
 
 Recherche sur how to nfc sans android beam pour éviter 2 connexions + 2 tap ==> 1 contact, 1 tap, synchronisation des BDD messages. (LLCP layer), invokebeam.
