@@ -201,7 +201,8 @@ Structurer les données pour la création des bases : deux tables :
 - Pourquoi envoi de beaucoup de messages si long?
 - Implémenter les feedback OK
 - Notifier l'accusé de reception pour chaque message
-- Notifier l'arrivée d'un nouveau message
+- Notifier l'arrivée d'un nouveau message OK
+- Cacher clavier apres envoi message
 - Refonte graphique 
 - Documentation (utilisation + doc technique)
 - tests
